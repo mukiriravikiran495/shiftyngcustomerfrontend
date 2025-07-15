@@ -7,8 +7,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { CalendarIcon, MapPin, ArrowUpDown, Calendar as CalendarIcon2, Search, Truck, ShieldCheck, Clock, HeadphonesIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [pickupLocation, setPickupLocation] = useState("");
   const [dropLocation, setDropLocation] = useState("");
   const [shiftDate, setShiftDate] = useState<Date>();
@@ -58,8 +60,11 @@ const Index = () => {
   };
 
   const handleSearch = () => {
-    // Handle search logic here
-    console.log({ pickupLocation, dropLocation, shiftDate, shiftType });
+    if (!pickupLocation || !dropLocation || !shiftDate || !shiftType) {
+      alert("Please fill in all fields");
+      return;
+    }
+    navigate("/items");
   };
 
   return (
