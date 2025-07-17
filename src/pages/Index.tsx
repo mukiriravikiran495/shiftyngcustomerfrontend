@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LoginModal } from "@/components/LoginModal";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Select,
@@ -33,6 +34,8 @@ import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [pickupLocation, setPickupLocation] = useState("");
   const [dropLocation, setDropLocation] = useState("");
   const [shiftDate, setShiftDate] = useState<Date>();
@@ -43,26 +46,22 @@ const Index = () => {
   const offers = [
     {
       id: 1,
-      image:
-        "/icons/offer1.jpg",
+      image: "/icons/offer1.jpg",
       title: "50% Off First Move",
     },
     {
       id: 2,
-      image:
-        "/icons/offer4.jpg",
+      image: "/icons/offer4.jpg",
       title: "Free Packaging",
     },
     {
       id: 3,
-      image:
-        "/icons/offer2.jpg",
+      image: "/icons/offer2.jpg",
       title: "Insurance Cover",
     },
     {
       id: 4,
-      image:
-        "/icons/offer3.jpg",
+      image: "/icons/offer3.jpg",
       title: "Same Day Delivery",
     },
     {
@@ -138,6 +137,18 @@ const Index = () => {
     setPickupLocation(dropLocation);
     setDropLocation(temp);
   };
+
+  if (hasSearched) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black-50 via-white to-purple-50 w-full">
+        <LoginModal
+          isOpen={isLoginOpen}
+          onClose={() => setIsLoginOpen(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -149,29 +160,40 @@ const Index = () => {
           </div>
 
           {/* Right Side: Nav + Login */}
-          <div className="hidden md:flex items-center space-x-8 ">
+          <div className=" md:flex items-center space-x-8 ">
             <a
               href="#offers"
-              className="text-[#BA1C1C] hover:text-primary transition-colors"
+              className=" hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
             >
               Offers
             </a>
             <a
               href="#help"
-              className="text-[#BA1C1C] hover:text-primary transition-colors"
+              className=" hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
             >
               Need Help ?
             </a>
-            <Button
+
+            {/* <Button
               variant="outline"
-              className="border-primary text-primary hover:bg-primary hover:text-white"
-            >
+              onClick={() => setIsLoginOpen(true)}
+                      className="bg-white font-bold  text-[#BA1C1C] px-6 py-2 w-full sm:w-32 rounded-lg transition-all duration-200 hover:scale-105"
+                    >
               Login
-            </Button>
+            </Button> */}
+            <div className="flex justify-end flex-1">
+              <Button
+                variant="outline"
+                onClick={() => setIsLoginOpen(true)}
+                className="border-primary text-primary hover:bg-primary hover:text-white"
+              >
+                Login
+              </Button>
+            </div>
           </div>
         </div>
       </header>
-
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Hero Section */}
       <section
         className="hero-bg py-20"
@@ -184,7 +206,6 @@ const Index = () => {
       >
         <div className="max-w-screen-xl mx-auto sm:px-6 lg:px-4 ">
           <div className=" text-center mb-10">
-            
             <h2 className=" text-4xl md:text-5xl font-bold text-[#BA1C1C] lg:text-white mb-4">
               Moving Made Simple
             </h2>

@@ -274,7 +274,7 @@ const Items = () => {
               <div className="flex items-center px-2 space-x-1 truncate">
                 <MapPin className="w-5 h-5 text-green-600 mr-3" />
                 {/* <span className="font-medium text-gray-600">From:</span> */}
-                <span className="ml-1 truncate">lat 102, Sidhardh Heaven, Mahesh Nagar</span>
+                <span className="ml-1 truncate">Flat 102, Sidhardh Heaven, Mahesh Nagar</span>
               </div>
 
               {/* To Location */}
@@ -282,7 +282,7 @@ const Items = () => {
                 {/* <ArrowRightLeft className="h-4 w-4 text-gray-400" /> */}
                 <MapPin className="w-5 h-5 text-red-600 mr-3" />
                 {/* <span className="font-medium text-gray-600">To:</span> */}
-                <span className=" ml-1 truncate">lat 102, Sidhardh Heaven, Mahesh Nagar</span>
+                <span className=" ml-1 truncate">Flat 102, Sidhardh Heaven, Mahesh Nagar</span>
               </div>
 
               {/* Date */}

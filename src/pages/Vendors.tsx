@@ -4,12 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
+
 import {
   ArrowLeft,
   Search,
   MapPin,
-  ArrowUpDown,
-  Calendar,
   Star,
   Shield,
   Clock,
@@ -18,9 +17,12 @@ import {
   Filter,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import MobileFilters from "@/components/MobileFilters";
+
 
 const Vendors = () => {
   const navigate = useNavigate();
+  const [sortOption, setSortOption] = useState("Relevance");
   const [selectedFilters, setSelectedFilters] = useState({
     rating: [0],
     price: [0, 50000],
@@ -186,8 +188,8 @@ const Vendors = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className=" bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 ">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left section (logo + back button) */}
             <div className="flex items-center flex-1">
@@ -218,11 +220,11 @@ const Vendors = () => {
       </header>
 
       {/* Booking Details Bar */}
-      <div className="bg-white border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-0 py-4">
+      <div className="bg-white border-b shadow-sm ">
+        <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-4">
           <div className="w-full">
             {/* Mobile Layout */}
-            <div className=" md:hidden flex items-start gap-2 text-sm px-2">
+            <div className="md:hidden flex items-start gap-2 text-sm px-2">
               {/* Left Column: Back Button */}
               <div className="hidden lg:block">
                 <Button
@@ -235,29 +237,27 @@ const Vendors = () => {
               </div>
 
               {/* Right Column: All Details stacked vertically */}
-              <div className="flex flex-col space-y-1">
-                {/* From Location */}
-                <div className="flex items-center space-x-1">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-3" />
-                  <span className="text-gray-600 truncate">Flat 102, Sidhardh Heaven, Mahesh Nagar </span>
+              {/* Mobile Layout - Clean Version */}
+              <div className="md:hidden px-4  space-y-2 text-sm bg-white ">
+                <div className="flex items-center gap-2 text-gray-600">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <span className="truncate">
+                    Flat 102, Sidhardh Heaven, Mahesh Nagar
+                  </span>
                 </div>
-
-                {/* To Location */}
-                <div className="flex items-center space-x-1">
-                  <div className="w-3 h-3 bg-red-500 rounded-full mr-3" />
-                  <span className="text-gray-600 truncate">lat 102, Sidhardh Heaven, Mahesh Nagar</span>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <div className="w-2 h-2 bg-red-500 rounded-full" />
+                  <span className="truncate">
+                    Flat 102, Sidhardh Heaven, Mahesh Nagar
+                  </span>
                 </div>
-
-                {/* Date and Type */}
-                <div className="flex items-center space-x-8">
-                  <div className="flex items-center whitespace-nowrap">
-                    <span className="font-medium ">Shift Date:</span>
-                    <span className="text-gray-600 ml-1">25 Dec 2024</span>
-                  </div>
-                  <div className="flex items-center whitespace-nowrap">
-                    <span className="font-medium ">Shift Type:</span>
-                    <span className="text-gray-600 ml-1">Domestic</span>
-                  </div>
+                <div className="flex flex-wrap gap-4 text-gray-600">
+                  <span>
+                    <span className="font-medium">Shift Date:</span> 25 Dec 2024
+                  </span>
+                  <span>
+                    <span className="font-medium">Shift Type:</span> Domestic
+                  </span>
                 </div>
               </div>
             </div>
@@ -279,25 +279,21 @@ const Vendors = () => {
               {/* From Location */}
               <div className="flex items-center px-2 space-x-1 truncate">
                 <MapPin className="w-5 h-5 text-green-600 mr-3" />
-                {/* <span className="font-medium text-gray-600">From:</span> */}
                 <span className="ml-1 truncate">Mumbai</span>
               </div>
 
               {/* To Location */}
               <div className="flex items-center px-2 space-x-1 truncate">
-                {/* <ArrowRightLeft className="h-4 w-4 text-gray-400" /> */}
                 <MapPin className="w-5 h-5 text-red-600 mr-3" />
-                {/* <span className="font-medium text-gray-600">To:</span> */}
-                <span className=" ml-1 truncate">Delhi</span>
+                <span className="ml-1 truncate">Delhi</span>
               </div>
 
               {/* Date */}
               <div className="flex items-center whitespace-nowrap">
-                {/* <Calendar className="h-4 w-4 text-gray-400 mr-1" /> */}
                 <span className="font-medium text-gray-600 mr-2">
                   Shift Date:
                 </span>
-                <span className=" ml-1">25 Dec 2024</span>
+                <span className="ml-1">25 Dec 2024</span>
               </div>
 
               {/* Type */}
@@ -305,7 +301,7 @@ const Vendors = () => {
                 <span className="font-medium text-gray-600 mr-2">
                   Shift Type:
                 </span>
-                <span className=" ml-1">Domestic</span>
+                <span className="ml-1">Domestic</span>
               </div>
 
               {/* Modify Button */}
@@ -320,11 +316,34 @@ const Vendors = () => {
         </div>
       </div>
 
-      {/* filter bar  */}
+      {/* Mobile Filters */}
+      {/* Mobile Filters + Sort */}
+      {/* Mobile Filters + Sort - Horizontal Scrollable */}
+      <div className="lg:hidden bg-white px-0  ">
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap">
+          <MobileFilters
+            selectedFilters={selectedFilters}
+            setSelectedFilters={setSelectedFilters}
+            serviceOptions={serviceOptions}
+            vehicleOptions={vehicleOptions}
+            sortOption={sortOption}
+            setSortOption={setSortOption}
+          />
+          <select className=" hidden lg:block border rounded-md px-3 py-2 text-sm bg-white shrink-0">
+            <option>Sort by: Relevance</option>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+            <option>Rating: High to Low</option>
+            <option>Delivery Time</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-6">
-          {/* Filters Sidebar */}
-          <div className="w-80">
+          {/* Desktop Filters Sidebar */}
+          <div className="hidden lg:block w-80">
             <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-28">
               <div className="flex items-center mb-6">
                 <Filter className="h-5 w-5 text-gray-600 mr-2" />
@@ -433,11 +452,8 @@ const Vendors = () => {
           {/* Vendors List */}
           <div className="flex-1">
             <div className="mb-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">
-                  {filteredVendors.length} Movers Found
-                </h2>
-                <select className="border rounded-md px-3 py-2 text-sm">
+              <div className="hidden lg:block flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <select className="border rounded-md px-3 py-2 text-sm bg-white w-full sm:w-auto">
                   <option>Sort by: Relevance</option>
                   <option>Price: Low to High</option>
                   <option>Price: High to Low</option>
@@ -447,38 +463,153 @@ const Vendors = () => {
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {filteredVendors.map((vendor) => (
                 <Card
                   key={vendor.id}
                   className="hover:shadow-md transition-shadow cursor-pointer"
                 >
-                  <CardContent className="p-6">
-                    <div className="flex gap-4">
+                  <CardContent className="p-4">
+                    {/* Mobile Layout - Stack vertically */}
+                    <div className="md:hidden">
+                      <div className="flex gap-3 mb-3">
+                        <img
+                          src={vendor.image}
+                          alt={vendor.name}
+                          className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="text-base font-semibold truncate">
+                              {vendor.name}
+                            </h3>
+                            {vendor.verified && (
+                              <Badge
+                                variant="secondary"
+                                className="bg-green-100 text-green-800 text-xs"
+                              >
+                                <Shield className="h-3 w-3" />
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-gray-600">
+                            <div className="flex items-center">
+                              <Star className="h-3 w-3 text-yellow-400 fill-current mr-1" />
+                              <span className="font-medium">
+                                {vendor.rating}
+                              </span>
+                            </div>
+                            <div className="flex items-center">
+                              <Truck className="h-3 w-3 mr-1" />
+                              <span>{vendor.vehicleType}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Price section - Mobile */}
+                      <div className="flex items-center justify-between mb-3 p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm text-gray-500 line-through">
+                              ₹{vendor.originalPrice.toLocaleString()}
+                            </span>
+                            <Badge variant="destructive" className="text-xs">
+                              {vendor.discount}% OFF
+                            </Badge>
+                          </div>
+                          <div className="text-xl font-bold text-primary">
+                            ₹{vendor.price.toLocaleString()}
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            All inclusive
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="flex items-center text-xs text-gray-600 mb-1">
+                            <Clock className="h-3 w-3 mr-1" />
+                            <span>{vendor.deliveryTime}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Services - Mobile */}
+                      <div className="mb-3">
+                        <div className="flex flex-wrap gap-1">
+                          {vendor.services.slice(0, 3).map((service) => (
+                            <Badge
+                              key={service}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              {service}
+                            </Badge>
+                          ))}
+                          {vendor.services.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{vendor.services.length - 3} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Features - Mobile */}
+                      <div className="mb-4">
+                        <div className="flex flex-wrap gap-1">
+                          {vendor.features.slice(0, 2).map((feature) => (
+                            <span
+                              key={feature}
+                              className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded"
+                            >
+                              ✓ {feature}
+                            </span>
+                          ))}
+                          {vendor.features.length > 2 && (
+                            <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                              +{vendor.features.length - 2} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Buttons - Mobile */}
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="flex-1">
+                          View Details
+                        </Button>
+                        <Button className="shiftyng-gradient hover:opacity-90 transition-opacity flex-1">
+                          Book Now
+                          <ChevronRight className="h-4 w-4 ml-1" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout - Horizontal */}
+                    <div className="hidden md:flex gap-4">
                       <img
                         src={vendor.image}
                         alt={vendor.name}
-                        className="w-20 h-20 rounded-lg object-cover"
+                        className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
                       />
 
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-lg font-semibold">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <h3 className="text-lg font-semibold truncate">
                                 {vendor.name}
                               </h3>
                               {vendor.verified && (
                                 <Badge
                                   variant="secondary"
-                                  className="bg-green-100 text-green-800"
+                                  className="bg-green-100 text-green-800 text-xs"
                                 >
                                   <Shield className="h-3 w-3 mr-1" />
                                   Verified
                                 </Badge>
                               )}
                             </div>
-                            <div className="flex items-center gap-4 text-sm text-gray-600">
+                            <div className="flex items-center gap-4 text-sm text-gray-600 flex-wrap">
                               <div className="flex items-center">
                                 <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
                                 <span className="font-medium">
@@ -499,8 +630,8 @@ const Vendors = () => {
                             </div>
                           </div>
 
-                          <div className="text-right">
-                            <div className="flex items-center gap-2 mb-1">
+                          <div className="text-right ml-2">
+                            <div className="flex items-center gap-2 mb-1 justify-end">
                               <span className="text-sm text-gray-500 line-through">
                                 ₹{vendor.originalPrice.toLocaleString()}
                               </span>
@@ -519,7 +650,7 @@ const Vendors = () => {
 
                         <div className="mb-3">
                           <div className="flex flex-wrap gap-2">
-                            {vendor.services.map((service) => (
+                            {vendor.services.slice(0, 4).map((service) => (
                               <Badge
                                 key={service}
                                 variant="outline"
@@ -528,6 +659,11 @@ const Vendors = () => {
                                 {service}
                               </Badge>
                             ))}
+                            {vendor.services.length > 4 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{vendor.services.length - 4} more
+                              </Badge>
+                            )}
                           </div>
                         </div>
 
@@ -544,7 +680,7 @@ const Vendors = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between gap-2">
                           <Button variant="outline" size="sm">
                             View Details
                           </Button>
