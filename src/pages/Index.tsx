@@ -44,25 +44,25 @@ const Index = () => {
     {
       id: 1,
       image:
-        "https://images.unsplash.com/photo-1566472049219-ca3ca39c3c0a?w=300&h=200&fit=crop",
+        "/icons/offer1.jpg",
       title: "50% Off First Move",
     },
     {
       id: 2,
       image:
-        "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=300&h=200&fit=crop",
+        "/icons/offer4.jpg",
       title: "Free Packaging",
     },
     {
       id: 3,
       image:
-        "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop",
+        "/icons/offer2.jpg",
       title: "Insurance Cover",
     },
     {
       id: 4,
       image:
-        "https://images.unsplash.com/photo-1550345685-4e40f5e4d323?w=300&h=200&fit=crop",
+        "/icons/offer3.jpg",
       title: "Same Day Delivery",
     },
     {
