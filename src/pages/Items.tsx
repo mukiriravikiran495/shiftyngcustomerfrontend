@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { LoginModal } from "@/components/LoginModal";
 import {
   ArrowLeft,
   MapPin,
@@ -16,6 +17,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Items = () => {
   const navigate = useNavigate();
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("furniture");
   const [selectedItems, setSelectedItems] = useState<{ [key: string]: number }>(
     {}
@@ -176,7 +179,16 @@ const Items = () => {
   const handleNext = () => {
     navigate("/vendors");
   };
-
+  if (hasSearched) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-black-50 via-white to-purple-50 w-full">
+          <LoginModal
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+          />
+        </div>
+      );
+  }
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -202,6 +214,7 @@ const Items = () => {
             <div className="flex justify-end flex-1">
               <Button
                 variant="outline"
+                onClick={() => setIsLoginOpen(true)}
                 className="border-primary text-primary hover:bg-primary hover:text-white"
               >
                 Login
@@ -210,7 +223,7 @@ const Items = () => {
           </div>
         </div>
       </header>
-
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Booking Details Bar */}
       <div className="bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-0 py-4">
@@ -229,29 +242,26 @@ const Items = () => {
               </div>
 
               {/* Right Column: All Details stacked vertically */}
-              <div className="flex flex-col space-y-1">
-                {/* From Location */}
-                <div className="flex items-center space-x-1">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-3" />
-                  <span className="text-gray-600 truncate">Flat 102, Sidhardh Heaven, Mahesh Nagar</span>
+              <div className="md:hidden px-2  space-y-2 text-sm bg-white ">
+                <div className="flex items-center gap-2 text-gray-600">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <span className="truncate">
+                    Flat 102, Sidhardh Heaven, Mahesh Nagar
+                  </span>
                 </div>
-
-                {/* To Location */}
-                <div className="flex items-center space-x-1">
-                  <div className="w-3 h-3 bg-red-500 rounded-full mr-3" />
-                  <span className="text-gray-600 truncate">Flat 102, Sidhardh Heaven, Mahesh Nagar</span>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <div className="w-2 h-2 bg-red-500 rounded-full" />
+                  <span className="truncate">
+                    Flat 102, Sidhardh Heaven, Mahesh Nagar
+                  </span>
                 </div>
-
-                {/* Date and Type */}
-                <div className="flex items-center space-x-8 ">
-                  <div className="flex items-center whitespace-nowrap">
-                    <span className="font-medium ">Shift Date:</span>
-                    <span className="text-gray-600 ml-1">25 Dec 2024</span>
-                  </div>
-                  <div className="flex items-center whitespace-nowrap ">
-                    <span className="font-medium ">Shift Type:</span>
-                    <span className="text-gray-600 ml-1">Domestic</span>
-                  </div>
+                <div className="flex flex-wrap gap-4 text-gray-600">
+                  <span>
+                    <span className="font-medium">Shift Date:</span> 25 Dec 2024
+                  </span>
+                  <span>
+                    <span className="font-medium">Shift Type:</span> Domestic
+                  </span>
                 </div>
               </div>
             </div>

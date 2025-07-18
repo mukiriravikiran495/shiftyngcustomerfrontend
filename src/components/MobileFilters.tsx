@@ -116,9 +116,8 @@ const MobileFilters = ({
   };
 
   return (
-    <div className="bg-white border-b shadow-sm px-0 py-3 overflow-x-auto">
-      <div className="flex items-center gap-2 px-4 pb-1 overflow-x-auto whitespace-nowrap hide-scrollbar">
-        {/* Rating Filter */}
+    <div className="bg-white px-0 py-3 overflow-x-auto hide-scrollbar">
+        <div className="flex items-center gap-2 px-4 pb-1 overflow-x-auto whitespace-nowrap hide-scrollbar">   {/* Rating Filter */}
         <DropdownMenu open={openDropdown === "rating"}>
           <DropdownMenuTrigger asChild>
             <div

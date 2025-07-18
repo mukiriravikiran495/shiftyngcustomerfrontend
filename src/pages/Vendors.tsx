@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-
+import { LoginModal } from "@/components/LoginModal";
 import {
   ArrowLeft,
   Search,
@@ -19,9 +19,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import MobileFilters from "@/components/MobileFilters";
 
-
 const Vendors = () => {
   const navigate = useNavigate();
+  const handleVendorClick = (vendor: any) => {
+    // Navigate to vendor detail page (adjust the route as needed)
+    navigate("/BookingDetails");
+  };
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [sortOption, setSortOption] = useState("Relevance");
   const [selectedFilters, setSelectedFilters] = useState({
     rating: [0],
@@ -39,8 +44,7 @@ const Vendors = () => {
       price: 12500,
       originalPrice: 15000,
       deliveryTime: "Same Day",
-      image:
-        "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=100&h=100&fit=crop",
+      image: "/icons/movers1.jpg",
       vehicleType: "Truck",
       services: [
         "Packing",
@@ -61,8 +65,7 @@ const Vendors = () => {
       price: 11200,
       originalPrice: 14000,
       deliveryTime: "Next Day",
-      image:
-        "https://images.unsplash.com/photo-1566472049219-ca3ca39c3c0a?w=100&h=100&fit=crop",
+      image: "/icons/movers2.jpg",
       vehicleType: "Mini Truck",
       services: ["Packing", "Loading", "Transportation", "Insurance"],
       verified: true,
@@ -77,8 +80,7 @@ const Vendors = () => {
       price: 13800,
       originalPrice: 16000,
       deliveryTime: "Same Day",
-      image:
-        "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=100&h=100&fit=crop",
+      image: "/icons/movers3.jpg",
       vehicleType: "Large Truck",
       services: [
         "Packing",
@@ -100,8 +102,7 @@ const Vendors = () => {
       price: 10500,
       originalPrice: 12000,
       deliveryTime: "Next Day",
-      image:
-        "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=100&h=100&fit=crop",
+      image: "/icons/movers4.jpg",
       vehicleType: "Tempo",
       services: ["Packing", "Loading", "Transportation"],
       verified: false,
@@ -116,8 +117,7 @@ const Vendors = () => {
       price: 15200,
       originalPrice: 18000,
       deliveryTime: "Same Day",
-      image:
-        "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=100&h=100&fit=crop",
+      image: "/icons/movers1.jpg",
       vehicleType: "Container",
       services: [
         "Packing",
@@ -129,7 +129,7 @@ const Vendors = () => {
       ],
       verified: true,
       discount: 16,
-      features: ["Premium Service", "White Glove", "Full Insurance"],
+      features: ["Premium Service", "White Glove"],
     },
   ];
 
@@ -184,7 +184,16 @@ const Vendors = () => {
 
     return ratingMatch && priceMatch && serviceMatch && vehicleMatch;
   });
-
+  if (hasSearched) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black-50 via-white to-purple-50 w-full">
+        <LoginModal
+          isOpen={isLoginOpen}
+          onClose={() => setIsLoginOpen(false)}
+        />
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -210,6 +219,7 @@ const Vendors = () => {
             <div className="flex justify-end flex-1">
               <Button
                 variant="outline"
+                onClick={() => setIsLoginOpen(true)}
                 className="border-primary text-primary hover:bg-primary hover:text-white"
               >
                 Login
@@ -218,7 +228,7 @@ const Vendors = () => {
           </div>
         </div>
       </header>
-
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Booking Details Bar */}
       <div className="bg-white border-b shadow-sm ">
         <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-4">
@@ -319,8 +329,8 @@ const Vendors = () => {
       {/* Mobile Filters */}
       {/* Mobile Filters + Sort */}
       {/* Mobile Filters + Sort - Horizontal Scrollable */}
-      <div className="lg:hidden bg-white px-0  ">
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap">
+      <div className="lg:hidden bg-white px-0 w-full ">
+        <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap">
           <MobileFilters
             selectedFilters={selectedFilters}
             setSelectedFilters={setSelectedFilters}
@@ -340,11 +350,11 @@ const Vendors = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex gap-6">
+      <div className="max-w-7xl mx-auto px-4 bg-white sm:px-6 lg:px-8 sm:py-0 lg:py-4 overflow-x-hidden">
+        <div className="flex gap-6 ">
           {/* Desktop Filters Sidebar */}
           <div className="hidden lg:block w-80">
-            <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-28">
+            <div className="bg-white rounded-lg shadow-sm border p-6 sticky ">
               <div className="flex items-center mb-6">
                 <Filter className="h-5 w-5 text-gray-600 mr-2" />
                 <h3 className="font-semibold text-lg">Filters</h3>
@@ -450,9 +460,9 @@ const Vendors = () => {
           </div>
 
           {/* Vendors List */}
-          <div className="flex-1">
+          <div className="flex-1 w-32 ">
             <div className="mb-4">
-              <div className="hidden lg:block flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="hidden lg:block flex flex-col sm:flex-row sm:items-center justify-between gap-3 ">
                 <select className="border rounded-md px-3 py-2 text-sm bg-white w-full sm:w-auto">
                   <option>Sort by: Relevance</option>
                   <option>Price: Low to High</option>
@@ -463,24 +473,32 @@ const Vendors = () => {
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 sm:w-32 lg:w-full border-1 shadow-lg ">
               {filteredVendors.map((vendor) => (
                 <Card
                   key={vendor.id}
-                  className="hover:shadow-md transition-shadow cursor-pointer"
+                  className=" hover:shadow-md transition-shadow cursor-pointer md:rounded-lg md:border md:shadow-sm overflow-hidden w-full"
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="p-4 mt-0">
                     {/* Mobile Layout - Stack vertically */}
-                    <div className="md:hidden">
-                      <div className="flex gap-3 mb-3">
-                        <img
-                          src={vendor.image}
-                          alt={vendor.name}
-                          className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                        />
-                        <div className="flex-1 min-w-0">
+                    {/* Mobile Layout - New Design */}
+                    <div className="md:hidden px-0 ">
+                    <button
+                      onClick={() => handleVendorClick(vendor)}
+                      className="w-full text-left md:hidden block p-0 m-0 overflow-hidden "
+                     >
+                      <div className="md:hidden">
+                        <div className="mb-3">
+                          <img
+                            src={vendor.image}
+                            alt={vendor.name}
+                            className="w-full h-40 object-cover rounded-lg max-w-full"
+                          />
+                        </div>
+
+                        <div className="mb-2">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="text-base font-semibold truncate">
+                            <h3 className="text-lg font-semibold">
                               {vendor.name}
                             </h3>
                             {vendor.verified && (
@@ -488,102 +506,87 @@ const Vendors = () => {
                                 variant="secondary"
                                 className="bg-green-100 text-green-800 text-xs"
                               >
-                                <Shield className="h-3 w-3" />
+                                <Shield className="h-3 w-3 mr-1" />
+                                Verified
                               </Badge>
                             )}
                           </div>
-                          <div className="flex items-center gap-3 text-xs text-gray-600">
+                          <div className="flex items-center text-sm text-gray-600 gap-3 flex-wrap">
                             <div className="flex items-center">
                               <Star className="h-3 w-3 text-yellow-400 fill-current mr-1" />
-                              <span className="font-medium">
-                                {vendor.rating}
-                              </span>
+                              {vendor.rating}
                             </div>
-                            <div className="flex items-center">
-                              <Truck className="h-3 w-3 mr-1" />
-                              <span>{vendor.vehicleType}</span>
-                            </div>
+                            <div className="text-gray-400">|</div>
+                            <div>({vendor.reviews} reviews)</div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Price section - Mobile */}
-                      <div className="flex items-center justify-between mb-3 p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm text-gray-500 line-through">
-                              ₹{vendor.originalPrice.toLocaleString()}
-                            </span>
+                        <div className="mb-3 flex items-center justify-between">
+                          {/* Right: Original Price + Discount Badge */}
+                          <div className="flex items-center gap-2">
                             <Badge variant="destructive" className="text-xs">
                               {vendor.discount}% OFF
                             </Badge>
+                            <span className="text-sm text-gray-500 line-through">
+                              ₹{vendor.originalPrice.toLocaleString()}
+                            </span>
+                            
                           </div>
+                          {/* Left: Discounted Price */}
                           <div className="text-xl font-bold text-primary">
                             ₹{vendor.price.toLocaleString()}
                           </div>
-                          <div className="text-xs text-gray-600">
-                            All inclusive
+
+                          
+                        </div>
+                        {/* <div className="text-xs text-gray-600">
+                          All inclusive
+                        </div> */}
+
+                        <div className="mb-3 mt-2">
+                          <div className="flex items-center gap-1 overflow-hidden">
+                            {vendor.services.slice(0, 3).map((service) => (
+                              <Badge
+                                key={service}
+                                variant="outline"
+                                className="text-xs whitespace-nowrap"
+                              >
+                                {service}
+                              </Badge>
+                            ))}
+
+                            {vendor.services.length > 3 && (
+                              <Badge
+                                variant="outline"
+                                className="text-xs whitespace-nowrap"
+                              >
+                                +{vendor.services.length - 3} more
+                              </Badge>
+                            )}
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="flex items-center text-xs text-gray-600 mb-1">
-                            <Clock className="h-3 w-3 mr-1" />
-                            <span>{vendor.deliveryTime}</span>
+
+                        <div className="mb-4">
+                          <div className="flex items-center gap-1 overflow-hidden">
+                            {vendor.features.slice(0, 2).map((feature) => (
+                              <span
+                                key={feature}
+                                className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded whitespace-nowrap"
+                              >
+                                ✓ {feature}
+                              </span>
+                            ))}
+
+                            {vendor.features.length > 2 && (
+                              <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded whitespace-nowrap">
+                                +{vendor.features.length - 3} more
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
-
-                      {/* Services - Mobile */}
-                      <div className="mb-3">
-                        <div className="flex flex-wrap gap-1">
-                          {vendor.services.slice(0, 3).map((service) => (
-                            <Badge
-                              key={service}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {service}
-                            </Badge>
-                          ))}
-                          {vendor.services.length > 3 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{vendor.services.length - 3} more
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Features - Mobile */}
-                      <div className="mb-4">
-                        <div className="flex flex-wrap gap-1">
-                          {vendor.features.slice(0, 2).map((feature) => (
-                            <span
-                              key={feature}
-                              className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded"
-                            >
-                              ✓ {feature}
-                            </span>
-                          ))}
-                          {vendor.features.length > 2 && (
-                            <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                              +{vendor.features.length - 2} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Buttons - Mobile */}
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="flex-1">
-                          View Details
-                        </Button>
-                        <Button className="shiftyng-gradient hover:opacity-90 transition-opacity flex-1">
-                          Book Now
-                          <ChevronRight className="h-4 w-4 ml-1" />
-                        </Button>
-                      </div>
+                    </button>
                     </div>
-
                     {/* Desktop Layout - Horizontal */}
                     <div className="hidden md:flex gap-4">
                       <img
@@ -684,7 +687,10 @@ const Vendors = () => {
                           <Button variant="outline" size="sm">
                             View Details
                           </Button>
-                          <Button className="shiftyng-gradient hover:opacity-90 transition-opacity">
+                          <Button
+                            onClick={() => handleVendorClick(vendor)}
+                            className="shiftyng-gradient hover:opacity-90 transition-opacity"
+                          >
                             Book Now
                             <ChevronRight className="h-4 w-4 ml-1" />
                           </Button>

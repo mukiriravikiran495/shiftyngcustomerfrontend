@@ -24,12 +24,13 @@
 .scrollbar-hidden::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Edge */
 }
-.hide-scrollbar {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-.hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+/* Hide scrollbar for IE, Edge, Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 @keyframes logo-spin {
   from {
