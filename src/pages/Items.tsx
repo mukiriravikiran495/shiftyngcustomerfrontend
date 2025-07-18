@@ -207,8 +207,13 @@ const Items = () => {
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
               </div>
-              <h1 className="text-2xl font-bold text-primary">Shiftyng</h1>
-            </div>
+              <h1
+            className="text-[30px] font-bold text-primary font-weight-900"
+            style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+          >
+            Shiftyng
+          </h1>
+              </div>
 
             {/* Right section (Login) */}
             <div className="flex justify-end flex-1">

@@ -212,7 +212,12 @@ const Vendors = () => {
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
               </div>
-              <h1 className="text-2xl font-bold text-primary">Shiftyng</h1>
+              <h1
+                className="text-[30px] font-bold text-primary font-weight-900"
+                style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+              >
+                Shiftyng
+              </h1>
             </div>
 
             {/* Right section (Login) */}
@@ -483,109 +488,106 @@ const Vendors = () => {
                     {/* Mobile Layout - Stack vertically */}
                     {/* Mobile Layout - New Design */}
                     <div className="md:hidden px-0 ">
-                    <button
-                      onClick={() => handleVendorClick(vendor)}
-                      className="w-full text-left md:hidden block p-0 m-0 overflow-hidden "
-                     >
-                      <div className="md:hidden">
-                        <div className="mb-3">
-                          <img
-                            src={vendor.image}
-                            alt={vendor.name}
-                            className="w-full h-40 object-cover rounded-lg max-w-full"
-                          />
-                        </div>
-
-                        <div className="mb-2">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="text-lg font-semibold">
-                              {vendor.name}
-                            </h3>
-                            {vendor.verified && (
-                              <Badge
-                                variant="secondary"
-                                className="bg-green-100 text-green-800 text-xs"
-                              >
-                                <Shield className="h-3 w-3 mr-1" />
-                                Verified
-                              </Badge>
-                            )}
+                      <button
+                        onClick={() => handleVendorClick(vendor)}
+                        className="w-full text-left md:hidden block p-0 m-0 overflow-hidden "
+                      >
+                        <div className="md:hidden">
+                          <div className="mb-3">
+                            <img
+                              src={vendor.image}
+                              alt={vendor.name}
+                              className="w-full h-40 object-cover rounded-lg max-w-full"
+                            />
                           </div>
-                          <div className="flex items-center text-sm text-gray-600 gap-3 flex-wrap">
-                            <div className="flex items-center">
-                              <Star className="h-3 w-3 text-yellow-400 fill-current mr-1" />
-                              {vendor.rating}
+
+                          <div className="mb-2">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="text-lg font-semibold">
+                                {vendor.name}
+                              </h3>
+                              {vendor.verified && (
+                                <Badge
+                                  variant="secondary"
+                                  className="bg-green-100 text-green-800 text-xs"
+                                >
+                                  <Shield className="h-3 w-3 mr-1" />
+                                  Verified
+                                </Badge>
+                              )}
                             </div>
-                            <div className="text-gray-400">|</div>
-                            <div>({vendor.reviews} reviews)</div>
-                          </div>
-                        </div>
-
-                        <div className="mb-3 flex items-center justify-between">
-                          {/* Right: Original Price + Discount Badge */}
-                          <div className="flex items-center gap-2">
-                            <Badge variant="destructive" className="text-xs">
-                              {vendor.discount}% OFF
-                            </Badge>
-                            <span className="text-sm text-gray-500 line-through">
-                              ₹{vendor.originalPrice.toLocaleString()}
-                            </span>
-                            
-                          </div>
-                          {/* Left: Discounted Price */}
-                          <div className="text-xl font-bold text-primary">
-                            ₹{vendor.price.toLocaleString()}
+                            <div className="flex items-center text-sm text-gray-600 gap-3 flex-wrap">
+                              <div className="flex items-center">
+                                <Star className="h-3 w-3 text-yellow-400 fill-current mr-1" />
+                                {vendor.rating}
+                              </div>
+                              <div className="text-gray-400">|</div>
+                              <div>({vendor.reviews} reviews)</div>
+                            </div>
                           </div>
 
-                          
-                        </div>
-                        {/* <div className="text-xs text-gray-600">
+                          <div className="mb-3 flex items-center justify-between">
+                            {/* Right: Original Price + Discount Badge */}
+                            <div className="flex items-center gap-2">
+                              <Badge variant="destructive" className="text-xs">
+                                {vendor.discount}% OFF
+                              </Badge>
+                              <span className="text-sm text-gray-500 line-through">
+                                ₹{vendor.originalPrice.toLocaleString()}
+                              </span>
+                            </div>
+                            {/* Left: Discounted Price */}
+                            <div className="text-xl font-bold text-primary">
+                              ₹{vendor.price.toLocaleString()}
+                            </div>
+                          </div>
+                          {/* <div className="text-xs text-gray-600">
                           All inclusive
                         </div> */}
 
-                        <div className="mb-3 mt-2">
-                          <div className="flex items-center gap-1 overflow-hidden">
-                            {vendor.services.slice(0, 3).map((service) => (
-                              <Badge
-                                key={service}
-                                variant="outline"
-                                className="text-xs whitespace-nowrap"
-                              >
-                                {service}
-                              </Badge>
-                            ))}
+                          <div className="mb-3 mt-2">
+                            <div className="flex items-center gap-1 overflow-hidden">
+                              {vendor.services.slice(0, 3).map((service) => (
+                                <Badge
+                                  key={service}
+                                  variant="outline"
+                                  className="text-xs whitespace-nowrap"
+                                >
+                                  {service}
+                                </Badge>
+                              ))}
 
-                            {vendor.services.length > 3 && (
-                              <Badge
-                                variant="outline"
-                                className="text-xs whitespace-nowrap"
-                              >
-                                +{vendor.services.length - 3} more
-                              </Badge>
-                            )}
+                              {vendor.services.length > 3 && (
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs whitespace-nowrap"
+                                >
+                                  +{vendor.services.length - 3} more
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="mb-4">
+                            <div className="flex items-center gap-1 overflow-hidden">
+                              {vendor.features.slice(0, 2).map((feature) => (
+                                <span
+                                  key={feature}
+                                  className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded whitespace-nowrap"
+                                >
+                                  ✓ {feature}
+                                </span>
+                              ))}
+
+                              {vendor.features.length > 2 && (
+                                <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded whitespace-nowrap">
+                                  +{vendor.features.length - 3} more
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-
-                        <div className="mb-4">
-                          <div className="flex items-center gap-1 overflow-hidden">
-                            {vendor.features.slice(0, 2).map((feature) => (
-                              <span
-                                key={feature}
-                                className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded whitespace-nowrap"
-                              >
-                                ✓ {feature}
-                              </span>
-                            ))}
-
-                            {vendor.features.length > 2 && (
-                              <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded whitespace-nowrap">
-                                +{vendor.features.length - 3} more
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </button>
+                      </button>
                     </div>
                     {/* Desktop Layout - Horizontal */}
                     <div className="hidden md:flex gap-4">

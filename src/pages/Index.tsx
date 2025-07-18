@@ -155,9 +155,16 @@ const Index = () => {
       <header className="bg-white shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
         <div className="flex justify-between items-center h-16">
           {/* Left Side: Logo */}
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <h1 className="text-2xl font-bold text-primary">Shiftyng</h1>
-          </div>
+          </div> */}
+
+          <h1
+            className="text-[30px] font-bold text-primary font-weight-900"
+            style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+          >
+            Shiftyng
+          </h1>
 
           {/* Right Side: Nav + Login */}
           <div className=" md:flex items-center space-x-8 ">
