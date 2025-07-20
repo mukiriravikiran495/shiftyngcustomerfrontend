@@ -4,6 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { LoginModal } from "@/components/LoginModal";
 import { useBooking } from "@/context/BookingContext";
+import { useItemContext } from "@/context/ItemContext";
+import type { SelectedItem } from "@/context/ItemContext";
+
 import {
   ArrowLeft,
   MapPin,
@@ -19,14 +22,12 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 const Items = () => {
   const location = useLocation();
   const { booking } = useBooking();
-
+  const { selectedItems, setSelectedItems } = useItemContext();
   const navigate = useNavigate();
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("furniture");
-  const [selectedItems, setSelectedItems] = useState<{ [key: string]: number }>(
-    {}
-  );
+
 
   const categories = [
     { id: "furniture", name: "Furniture", icon: "🪑" },
@@ -160,24 +161,31 @@ const Items = () => {
     ],
   };
 
-  const updateItemCount = (itemId: number, increment: boolean) => {
+  const updateItemCount = (
+    item: { id: string; name: string; image: string; category: string },
+    increase: boolean
+  ) => {
     setSelectedItems((prev) => {
-      const currentCount = prev[itemId] || 0;
-      const newCount = increment
-        ? currentCount + 1
-        : Math.max(0, currentCount - 1);
-
-      if (newCount === 0) {
-        const { [itemId]: removed, ...rest } = prev;
-        return rest;
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        const updated = prev.map((i) =>
+          i.id === item.id
+            ? { ...i, quantity: increase ? i.quantity + 1 : Math.max(i.quantity - 1, 0) }
+            : i
+        ).filter(i => i.quantity > 0); // remove if quantity becomes 0
+        return updated;
+      } else if (increase) {
+        return [...prev, { ...item, quantity: 1 }];
       }
-
-      return { ...prev, [itemId]: newCount };
+      return prev;
     });
   };
 
+  // const getTotalItems = () => {
+  //   return Object.values(selectedItems).reduce((sum, count) => sum + count, 0);
+  // };
   const getTotalItems = () => {
-    return Object.values(selectedItems).reduce((sum, count) => sum + count, 0);
+    return selectedItems.reduce((sum, item) => sum + item.quantity, 0);
   };
 
   const handleNext = () => {
@@ -393,19 +401,43 @@ const Items = () => {
                       {item.name}
                     </h4>
 
-                    {selectedItems[item.id] ? (
-                      <div className="flex items-center justify-between">
+                    {selectedItems.find((selected) => selected.id === String(item.id)) ? (
+                      <div className="flex items-center justify-center gap-1 ">
                         <button
-                          onClick={() => updateItemCount(item.id, false)}
+                          onClick={() =>
+                            updateItemCount(
+                              {
+                                id: String(item.id),
+                                name: item.name,
+                                image: item.image,
+                                category: selectedCategory,
+                              },
+                              false
+                            )
+                          }
                           className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-primary flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
                         >
                           <Minus className="h-3 w-3" />
                         </button>
+
                         <span className="font-semibold text-sm sm:text-lg px-2 sm:px-3">
-                          {selectedItems[item.id]}
+                          {
+                            selectedItems.find((selected) => selected.id === String(item.id))?.quantity ?? 0
+                          }
                         </span>
+
                         <button
-                          onClick={() => updateItemCount(item.id, true)}
+                          onClick={() =>
+                            updateItemCount(
+                              {
+                                id: String(item.id),
+                                name: item.name,
+                                image: item.image,
+                                category: selectedCategory,
+                              },
+                              true
+                            )
+                          }
                           className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors"
                         >
                           <Plus className="h-3 w-3" />
@@ -413,7 +445,17 @@ const Items = () => {
                       </div>
                     ) : (
                       <Button
-                        onClick={() => updateItemCount(item.id, true)}
+                        onClick={() =>
+                          updateItemCount(
+                            {
+                              id: String(item.id),
+                              name: item.name,
+                              image: item.image,
+                              category: selectedCategory,
+                            },
+                            true
+                          )
+                        }
                         variant="outline"
                         size="sm"
                         className="w-full border-primary text-primary text-xs sm:text-sm py-1 sm:py-2 hover:bg-primary hover:text-white"
@@ -422,6 +464,7 @@ const Items = () => {
                       </Button>
                     )}
                   </div>
+
                 </div>
               )
             )}
