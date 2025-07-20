@@ -200,10 +200,10 @@ const Vendors = () => {
     );
   }
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="w-full bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left section (logo + back button) */}
             <div className="flex items-center flex-1">
@@ -211,7 +211,7 @@ const Vendors = () => {
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => navigate("/items")}
+                  onClick={() => navigate("/Items")}
                   className="mr-3"
                 >
                   <ArrowLeft className="h-5 w-5" />
@@ -240,10 +240,9 @@ const Vendors = () => {
       </header>
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Booking Details Bar */}
-      <div className="bg-white  border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-0 py-4 ">
-          {/* Booking Form Container with rounded corners */}
-          <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 lg:p-8">
+      <div className="bg-white  shadow-sm">
+        <div className="w-full  mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="bg-white rounded-2xl border -mb-1 shadow-sm p-4 sm:p-6 lg:p-8 w-full">
             <div className="w-full">
               {/* Mobile Layout */}
               <div className="md:hidden h-18 -mt-2 flex items-start gap-2 text-sm ">
@@ -272,19 +271,17 @@ const Vendors = () => {
                   {/* Single Row for Shift Date and Shift Type */}
                   <div className="flex justify-between gap-4 text-gray-600 text-xs px-4">
                     <span>
-                      <span className="font-medium">Shift Date:</span>{" "}
-                      {booking.shiftDate}
+                      <span className="font-medium">Shift Date:</span> {booking.shiftDate}
                     </span>
                     <span>
-                      <span className="font-medium">Shift Type:</span>{" "}
-                      {booking.shiftType}
+                      <span className="font-medium">Shift Type:</span> {booking.shiftType}
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Desktop Layout */}
-              <div className="hidden md:grid h-8 border-r grid-cols-[auto_2fr_2fr_minmax(120px,1fr)_minmax(120px,0.8fr)_auto] items-center gap-2 text-sm">
+              <div className="hidden md:grid h-8 border-sm grid-cols-[auto_2fr_2fr_minmax(120px,1fr)_minmax(120px,0.8fr)_auto] items-center gap-2 text-sm">
                 {/* Back Button */}
                 <div>
                   <Button
@@ -301,9 +298,7 @@ const Vendors = () => {
                 <div className="flex items-center px-2 space-x-1 truncate">
                   <MapPin className="w-5 h-5 text-green-600 mr-3" />
                   {/* <span className="font-medium text-gray-600">From:</span> */}
-                  <span className="ml-1 truncate">
-                    {booking.pickupLocation}
-                  </span>
+                  <span className="ml-1 truncate">{booking.pickupLocation}</span>
                 </div>
 
                 {/* To Location */}
@@ -347,7 +342,7 @@ const Vendors = () => {
       {/* Mobile Filters */}
       {/* Mobile Filters + Sort */}
       {/* Mobile Filters + Sort - Horizontal Scrollable */}
-      <div className="lg:hidden bg-white px-0 w-full ">
+      <div className="lg:hidden bg-white px-0 w-full -mt-2">
         <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap">
           <MobileFilters
             selectedFilters={selectedFilters}
@@ -368,7 +363,7 @@ const Vendors = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 bg-white sm:px-6 lg:px-8 sm:py-0 lg:py-4 overflow-x-hidden">
+      <div className="w-full mx-auto px-4 bg-white sm:px-6 lg:px-8 sm:py-0 lg:py-4 overflow-x-hidden">
         <div className="flex gap-6 ">
           {/* Desktop Filters Sidebar */}
           <div className="hidden lg:block w-80">
@@ -479,7 +474,7 @@ const Vendors = () => {
 
           {/* Vendors List */}
           <div className="flex-1 w-32 ">
-            <div className="mb-4">
+            <div className="lg:mb-4">
               <div className="hidden lg:block flex flex-col sm:flex-row sm:items-center justify-between gap-3 ">
                 <select className="border rounded-md px-3 py-2 text-sm bg-white w-full sm:w-auto">
                   <option>Sort by: Relevance</option>

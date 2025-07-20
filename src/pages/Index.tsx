@@ -78,7 +78,7 @@ const StaticAutocomplete = ({
             filtered.map((loc) => (
               <li
                 key={loc}
-                onClick={() => {
+                onMouseDown={() => {
                   onChange(loc);
                   setShowSuggestions(false);
                 }}
@@ -220,7 +220,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="w-full bg-background">
       {/* Header */}
       <header className="bg-white shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
         <div className="flex justify-between items-center h-16">
@@ -280,7 +280,7 @@ const Index = () => {
           backgroundBlendMode: "overlay",
         }}
       >
-        <div className="max-w-screen-xl mx-auto sm:px-6 lg:px-4 ">
+        <div className="w-full mx-auto sm:px-6 lg:px-4 ">
           <div className=" text-center mb-10">
             <h2 className=" text-4xl md:text-5xl font-bold text-[#BA1C1C] lg:text-white mb-4">
               Moving Made Simple
@@ -396,9 +396,13 @@ const Index = () => {
                           }
                           onSelect={(date) => {
                             if (date) {
+                              const day = String(date.getDate()).padStart(2, "0");
+                              const month = date.toLocaleString("default", { month: "short" });
+                              const year = date.getFullYear();
+                              const formattedDate = `${day}-${month}-${year}`;
                               setBooking((prev) => ({
                                 ...prev,
-                                shiftDate: date.toISOString(), // ✅ store as ISO string in context
+                                shiftDate: formattedDate, // ✅ store as ISO string in context
                               }));
                             }
                           }}
@@ -514,9 +518,13 @@ const Index = () => {
                             }
                             onSelect={(date) => {
                               if (date) {
+                                const day = String(date.getDate()).padStart(2, "0");
+                                const month = date.toLocaleString("default", { month: "short" });
+                                const year = date.getFullYear();
+                                const formattedDate = `${day}-${month}-${year}`;
                                 setBooking((prev) => ({
                                   ...prev,
-                                  shiftDate: date.toISOString(), // store as string
+                                  shiftDate: formattedDate, // store as string
                                 }));
                               }
                             }}

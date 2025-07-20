@@ -182,8 +182,8 @@ const Items = () => {
 
   const handleNext = () => {
     navigate("/vendors"), {
-    
-  };
+
+    };
   }
   if (hasSearched) {
     return (
@@ -196,10 +196,12 @@ const Items = () => {
     );
   }
   return (
-    <div className="min-h-screen bg-background">
+    <div className="w-full  bg-background">
       {/* Header */}
-      <header className=" bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 ">
+      {/* <header className=" bg-white shadow-sm border-b sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 "> */}
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left section (logo + back button) */}
             <div className="flex items-center flex-1">
@@ -236,10 +238,9 @@ const Items = () => {
       </header>
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Booking Details Bar */}
-      <div className="bg-white border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-0 py-4 ">
-          {/* Booking Form Container with rounded corners */}
-          <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 lg:p-8">
+      <div className="bg-white  shadow-sm">
+        <div className="w-full  mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="bg-white rounded-2xl border shadow-sm p-4 sm:p-6 lg:p-8 w-full">
             <div className="w-full">
               {/* Mobile Layout */}
               <div className="md:hidden h-18 -mt-2 flex items-start gap-2 text-sm ">
@@ -336,21 +337,21 @@ const Items = () => {
         </div>
       </div>
       {/* Category Bar */}
-      <div className="flex  px-0 lg:px-4 ">
+      {/* <div className="flex  px-1  lg:px-8 "> */}
+      <div className="flex w-full  mx-auto px-1 sm:px-6 lg:px-6">
         {/* Categories Sidebar */}
-        <div className="w-24 sm:w-28 rounded-2xl lg:w-48 bg-white shadow-sm h-full overflow-y-auto px-2 pt-2 md:w-36 md:pt-3">
-          <div className="space-y-4 md:space-y-1 rounded-2xl lg:bg-gradient-to-b from-primary/15 to-white bg-gradient-to-b from-primary/15 to-white text-primary border">
+        <div className="w-24 sm:w-28 md:w-36 lg:w-60 xl:w-72 2xl:w-80 rounded-2xl bg-white shadow-sm h-full overflow-y-auto px-2 pt-2 md:pt-3">
+          <div className="space-y-4  md:space-y-1 rounded-2xl lg:bg-gradient-to-b from-primary/15 to-white bg-gradient-to-b from-primary/15 to-white text-primary ">
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
                 className={`
           flex items-center w-full rounded-2xl transition-colors duration-300
-          ${
-            selectedCategory === category.id
-              ? "bg-gradient-to-b from-primary/15 to-white text-primary border "
-              : "text-gray-700 hover:bg-gray-100"
-          }
+          ${selectedCategory === category.id
+                    ? "bg-gradient-to-b from-primary/15 to-white text-primary border "
+                    : "text-gray-700 hover:bg-gray-100"
+                  }
 
           flex-col justify-center p-2 text-center
           md:flex-row md:justify-start md:items-center  md:h-16 md:px-2 md:py-3 md:rounded-lg md:text-left
@@ -371,7 +372,7 @@ const Items = () => {
         </div>
 
         {/* Items Grid */}
-        <div className="flex-1 overflow-y-auto h-full p-3 sm:p-4 scrollbar-hide">
+        <div className="flex-1 overflow-y-auto h-full p-3 sm:p-4 scrollbar-hide ">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6  gap-3 ">
             {(items[selectedCategory as keyof typeof items] || []).map(
               (item) => (
@@ -431,7 +432,7 @@ const Items = () => {
       {/* Bottom Action Bar */}
       {getTotalItems() > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
               {/* Left section: Badge + Buttons in row for mobile too */}
               <div className="flex w-full justify-between items-center gap-2">
