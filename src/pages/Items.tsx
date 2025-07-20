@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { LoginModal } from "@/components/LoginModal";
+import { useBooking } from "@/context/BookingContext";
 import {
   ArrowLeft,
   MapPin,
@@ -13,9 +14,12 @@ import {
   Search,
   ArrowRightLeft,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Items = () => {
+  const location = useLocation();
+  const { booking } = useBooking();
+
   const navigate = useNavigate();
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -177,17 +181,19 @@ const Items = () => {
   };
 
   const handleNext = () => {
-    navigate("/vendors");
+    navigate("/vendors"), {
+    
   };
+  }
   if (hasSearched) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-black-50 via-white to-purple-50 w-full">
-          <LoginModal
-            isOpen={isLoginOpen}
-            onClose={() => setIsLoginOpen(false)}
-          />
-        </div>
-      );
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black-50 via-white to-purple-50 w-full">
+        <LoginModal
+          isOpen={isLoginOpen}
+          onClose={() => setIsLoginOpen(false)}
+        />
+      </div>
+    );
   }
   return (
     <div className="min-h-screen bg-background">
@@ -208,12 +214,12 @@ const Items = () => {
                 </Button>
               </div>
               <h1
-            className="text-[30px] font-bold text-primary font-weight-900"
-            style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
-          >
-            Shiftyng
-          </h1>
-              </div>
+                className="text-[30px] font-bold text-primary font-weight-900"
+                style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+              >
+                Shiftyng
+              </h1>
+            </div>
 
             {/* Right section (Login) */}
             <div className="flex justify-end flex-1">
@@ -231,137 +237,138 @@ const Items = () => {
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Booking Details Bar */}
       <div className="bg-white border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-0 py-4">
-          <div className="w-full">
-            {/* Mobile Layout */}
-            <div className=" md:hidden flex items-start gap-2 text-sm px-2">
-              {/* Left Column: Back Button */}
-              <div className="hidden lg:block">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => navigate("/")}
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-              </div>
-
-              {/* Right Column: All Details stacked vertically */}
-              <div className="md:hidden px-2  space-y-2 text-sm bg-white ">
-                <div className="flex items-center gap-2 text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full" />
-                  <span className="truncate">
-                    Flat 102, Sidhardh Heaven, Mahesh Nagar
-                  </span>
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-0 py-4 ">
+          {/* Booking Form Container with rounded corners */}
+          <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 lg:p-8">
+            <div className="w-full">
+              {/* Mobile Layout */}
+              <div className="md:hidden h-18 -mt-2 flex items-start gap-2 text-sm ">
+                {/* Left Column: Back Button */}
+                <div className="hidden lg:block">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => navigate("/")}
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
                 </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <div className="w-2 h-2 bg-red-500 rounded-full" />
-                  <span className="truncate">
-                    Flat 102, Sidhardh Heaven, Mahesh Nagar
-                  </span>
+
+                {/* Right Column: All Details stacked vertically */}
+                <div className="md:hidden px-2 h-16 space-y-2 text-sm bg-white">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full" />
+                    <span className="truncate">{booking.pickupLocation}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <div className="w-2 h-2 bg-red-500 rounded-full" />
+                    <span className="truncate">{booking.dropLocation}</span>
+                  </div>
+
+                  {/* Single Row for Shift Date and Shift Type */}
+                  <div className="flex justify-between gap-4 text-gray-600 text-xs px-4">
+                    <span>
+                      <span className="font-medium">Shift Date:</span> {booking.shiftDate}
+                    </span>
+                    <span>
+                      <span className="font-medium">Shift Type:</span> {booking.shiftType}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-4 text-gray-600">
-                  <span>
-                    <span className="font-medium">Shift Date:</span> 25 Dec 2024
-                  </span>
-                  <span>
-                    <span className="font-medium">Shift Type:</span> Domestic
-                  </span>
+              </div>
+
+              {/* Desktop Layout */}
+              <div className="hidden md:grid h-8 border-r grid-cols-[auto_2fr_2fr_minmax(120px,1fr)_minmax(120px,0.8fr)_auto] items-center gap-2 text-sm">
+                {/* Back Button */}
+                <div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => navigate("/")}
+                    className="mr-2"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
                 </div>
-              </div>
-            </div>
 
-            {/* Desktop Layout */}
-            <div className="hidden md:grid grid-cols-[auto_2fr_2fr_minmax(120px,1fr)_minmax(120px,0.8fr)_auto] items-center gap-2 text-sm">
-              {/* Back Button */}
-              <div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => navigate("/")}
-                  className="mr-2"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-              </div>
+                {/* From Location */}
+                <div className="flex items-center px-2 space-x-1 truncate">
+                  <MapPin className="w-5 h-5 text-green-600 mr-3" />
+                  {/* <span className="font-medium text-gray-600">From:</span> */}
+                  <span className="ml-1 truncate">{booking.pickupLocation}</span>
+                </div>
 
-              {/* From Location */}
-              <div className="flex items-center px-2 space-x-1 truncate">
-                <MapPin className="w-5 h-5 text-green-600 mr-3" />
-                {/* <span className="font-medium text-gray-600">From:</span> */}
-                <span className="ml-1 truncate">Flat 102, Sidhardh Heaven, Mahesh Nagar</span>
-              </div>
+                {/* To Location */}
+                <div className="flex items-center px-2 space-x-1 truncate">
+                  {/* <ArrowRightLeft className="h-4 w-4 text-gray-400" /> */}
+                  <MapPin className="w-5 h-5 text-red-600 mr-3" />
+                  {/* <span className="font-medium text-gray-600">To:</span> */}
+                  <span className=" ml-1 truncate">{booking.dropLocation}</span>
+                </div>
 
-              {/* To Location */}
-              <div className="flex items-center px-2 space-x-1 truncate">
-                {/* <ArrowRightLeft className="h-4 w-4 text-gray-400" /> */}
-                <MapPin className="w-5 h-5 text-red-600 mr-3" />
-                {/* <span className="font-medium text-gray-600">To:</span> */}
-                <span className=" ml-1 truncate">Flat 102, Sidhardh Heaven, Mahesh Nagar</span>
-              </div>
+                {/* Date */}
+                <div className="flex items-center whitespace-nowrap">
+                  {/* <Calendar className="h-4 w-4 text-gray-400 mr-1" /> */}
+                  <span className="font-medium text-gray-600 mr-2">
+                    Shift Date:
+                  </span>
+                  <span className=" ml-1">{booking.shiftDate}</span>
+                </div>
 
-              {/* Date */}
-              <div className="flex items-center whitespace-nowrap">
-                {/* <Calendar className="h-4 w-4 text-gray-400 mr-1" /> */}
-                <span className="font-medium text-gray-600 mr-2">
-                  Shift Date:
-                </span>
-                <span className=" ml-1">25 Dec 2024</span>
-              </div>
+                {/* Type */}
+                <div className="flex items-center whitespace-nowrap">
+                  <span className="font-medium text-gray-600 mr-2">
+                    Shift Type:
+                  </span>
+                  <span className=" ml-1">{booking.shiftType}</span>
+                </div>
 
-              {/* Type */}
-              <div className="flex items-center whitespace-nowrap">
-                <span className="font-medium text-gray-600 mr-2">
-                  Shift Type:
-                </span>
-                <span className=" ml-1">Domestic</span>
-              </div>
-
-              {/* Modify Button */}
-              <div>
-                <Button variant="outline" size="sm">
-                  <Search className="h-4 w-4 mr-1" />
-                  Modify
-                </Button>
+                {/* Modify Button */}
+                <div>
+                  <Button variant="outline" size="sm">
+                    <Search className="h-4 w-4 mr-1" />
+                    Modify
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
       {/* Category Bar */}
       <div className="flex  px-0 lg:px-4 ">
         {/* Categories Sidebar */}
-        <div className="w-24 sm:w-28 lg:w-48 bg-white shadow-sm h-full overflow-y-auto px-2 pt-4 md:w-36 md:pt-3">
-  <div className="space-y-4 md:space-y-1">
-    {categories.map((category) => (
-      <button
-        key={category.id}
-        onClick={() => setSelectedCategory(category.id)}
-        className={`
+        <div className="w-24 sm:w-28 rounded-2xl lg:w-48 bg-white shadow-sm h-full overflow-y-auto px-2 pt-2 md:w-36 md:pt-3">
+          <div className="space-y-4 md:space-y-1 rounded-2xl lg:bg-gradient-to-b from-primary/15 to-white bg-gradient-to-b from-primary/15 to-white text-primary border">
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`
           flex items-center w-full rounded-2xl transition-colors duration-300
-          ${selectedCategory === category.id
-            ? "bg-gradient-to-b from-primary/15 to-white text-primary border "
-            : "text-gray-700 hover:bg-gray-100"}
+          ${
+            selectedCategory === category.id
+              ? "bg-gradient-to-b from-primary/15 to-white text-primary border "
+              : "text-gray-700 hover:bg-gray-100"
+          }
 
           flex-col justify-center p-2 text-center
           md:flex-row md:justify-start md:items-center  md:h-16 md:px-2 md:py-3 md:rounded-lg md:text-left
         `}
-      >
-        {/* Icon */}
-        <span className="text-2xl mb-1 md:mb-0 md:mr-2">
-          {category.icon}
-        </span>
+              >
+                {/* Icon */}
+                <span className="text-2xl mb-1 md:mb-0 md:mr-2">
+                  {category.icon}
+                </span>
 
-        {/* Name */}
-        <span className="text-xs font-medium md:text-sm break-words">
-          {category.name}
-        </span>
-      </button>
-    ))}
-  </div>
-</div>
-
+                {/* Name */}
+                <span className="text-xs font-medium md:text-sm break-words">
+                  {category.name}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Items Grid */}
         <div className="flex-1 overflow-y-auto h-full p-3 sm:p-4 scrollbar-hide">

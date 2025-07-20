@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { LoginModal } from "@/components/LoginModal";
+import { useBooking } from "@/context/BookingContext";
 import {
   ArrowLeft,
   Search,
@@ -16,24 +17,28 @@ import {
   ChevronRight,
   Filter,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import MobileFilters from "@/components/MobileFilters";
 
 const Vendors = () => {
   const navigate = useNavigate();
-  const handleVendorClick = (vendor: any) => {
-    // Navigate to vendor detail page (adjust the route as needed)
-    navigate("/BookingDetails");
-  };
+  const location = useLocation();
+  const { booking } = useBooking();
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [sortOption, setSortOption] = useState("Relevance");
+
   const [selectedFilters, setSelectedFilters] = useState({
     rating: [0],
     price: [0, 50000],
     services: [] as string[],
     vehicleType: [] as string[],
   });
+
+  const handleVendorClick = () => {
+    // Navigate to vendor detail page (adjust the route as needed)
+    navigate("/BookingDetails"), {};
+  };
 
   const vendors = [
     {
@@ -235,96 +240,104 @@ const Vendors = () => {
       </header>
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Booking Details Bar */}
-      <div className="bg-white border-b shadow-sm ">
-        <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-4">
-          <div className="w-full">
-            {/* Mobile Layout */}
-            <div className="md:hidden flex items-start gap-2 text-sm px-2">
-              {/* Left Column: Back Button */}
-              <div className="hidden lg:block">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => navigate("/items")}
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
+      <div className="bg-white  border-b shadow-sm">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-0 py-4 ">
+          {/* Booking Form Container with rounded corners */}
+          <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 lg:p-8">
+            <div className="w-full">
+              {/* Mobile Layout */}
+              <div className="md:hidden h-18 -mt-2 flex items-start gap-2 text-sm ">
+                {/* Left Column: Back Button */}
+                <div className="hidden lg:block">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => navigate("/Items")}
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                </div>
+
+                {/* Right Column: All Details stacked vertically */}
+                <div className="md:hidden px-2 h-16 space-y-2 text-sm bg-white">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full" />
+                    <span className="truncate">{booking.pickupLocation}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <div className="w-2 h-2 bg-red-500 rounded-full" />
+                    <span className="truncate">{booking.dropLocation}</span>
+                  </div>
+
+                  {/* Single Row for Shift Date and Shift Type */}
+                  <div className="flex justify-between gap-4 text-gray-600 text-xs px-4">
+                    <span>
+                      <span className="font-medium">Shift Date:</span>{" "}
+                      {booking.shiftDate}
+                    </span>
+                    <span>
+                      <span className="font-medium">Shift Type:</span>{" "}
+                      {booking.shiftType}
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              {/* Right Column: All Details stacked vertically */}
-              {/* Mobile Layout - Clean Version */}
-              <div className="md:hidden px-4  space-y-2 text-sm bg-white ">
-                <div className="flex items-center gap-2 text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full" />
-                  <span className="truncate">
-                    Flat 102, Sidhardh Heaven, Mahesh Nagar
+              {/* Desktop Layout */}
+              <div className="hidden md:grid h-8 border-r grid-cols-[auto_2fr_2fr_minmax(120px,1fr)_minmax(120px,0.8fr)_auto] items-center gap-2 text-sm">
+                {/* Back Button */}
+                <div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => navigate("/Items")}
+                    className="mr-2"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                </div>
+
+                {/* From Location */}
+                <div className="flex items-center px-2 space-x-1 truncate">
+                  <MapPin className="w-5 h-5 text-green-600 mr-3" />
+                  {/* <span className="font-medium text-gray-600">From:</span> */}
+                  <span className="ml-1 truncate">
+                    {booking.pickupLocation}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <div className="w-2 h-2 bg-red-500 rounded-full" />
-                  <span className="truncate">
-                    Flat 102, Sidhardh Heaven, Mahesh Nagar
-                  </span>
+
+                {/* To Location */}
+                <div className="flex items-center px-2 space-x-1 truncate">
+                  {/* <ArrowRightLeft className="h-4 w-4 text-gray-400" /> */}
+                  <MapPin className="w-5 h-5 text-red-600 mr-3" />
+                  {/* <span className="font-medium text-gray-600">To:</span> */}
+                  <span className=" ml-1 truncate">{booking.dropLocation}</span>
                 </div>
-                <div className="flex flex-wrap gap-4 text-gray-600">
-                  <span>
-                    <span className="font-medium">Shift Date:</span> 25 Dec 2024
+
+                {/* Date */}
+                <div className="flex items-center whitespace-nowrap">
+                  {/* <Calendar className="h-4 w-4 text-gray-400 mr-1" /> */}
+                  <span className="font-medium text-gray-600 mr-2">
+                    Shift Date:
                   </span>
-                  <span>
-                    <span className="font-medium">Shift Type:</span> Domestic
-                  </span>
+                  <span className=" ml-1">{booking.shiftDate}</span>
                 </div>
-              </div>
-            </div>
 
-            {/* Desktop Layout */}
-            <div className="hidden md:grid grid-cols-[auto_2fr_2fr_minmax(120px,1fr)_minmax(120px,0.8fr)_auto] items-center gap-2 text-sm">
-              {/* Back Button */}
-              <div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => navigate("/items")}
-                  className="mr-2"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-              </div>
+                {/* Type */}
+                <div className="flex items-center whitespace-nowrap">
+                  <span className="font-medium text-gray-600 mr-2">
+                    Shift Type:
+                  </span>
+                  <span className=" ml-1">{booking.shiftType}</span>
+                </div>
 
-              {/* From Location */}
-              <div className="flex items-center px-2 space-x-1 truncate">
-                <MapPin className="w-5 h-5 text-green-600 mr-3" />
-                <span className="ml-1 truncate">Mumbai</span>
-              </div>
-
-              {/* To Location */}
-              <div className="flex items-center px-2 space-x-1 truncate">
-                <MapPin className="w-5 h-5 text-red-600 mr-3" />
-                <span className="ml-1 truncate">Delhi</span>
-              </div>
-
-              {/* Date */}
-              <div className="flex items-center whitespace-nowrap">
-                <span className="font-medium text-gray-600 mr-2">
-                  Shift Date:
-                </span>
-                <span className="ml-1">25 Dec 2024</span>
-              </div>
-
-              {/* Type */}
-              <div className="flex items-center whitespace-nowrap">
-                <span className="font-medium text-gray-600 mr-2">
-                  Shift Type:
-                </span>
-                <span className="ml-1">Domestic</span>
-              </div>
-
-              {/* Modify Button */}
-              <div>
-                <Button variant="outline" size="sm">
-                  <Search className="h-4 w-4 mr-1" />
-                  Modify
-                </Button>
+                {/* Modify Button */}
+                <div>
+                  <Button variant="outline" size="sm">
+                    <Search className="h-4 w-4 mr-1" />
+                    Modify
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -489,7 +502,7 @@ const Vendors = () => {
                     {/* Mobile Layout - New Design */}
                     <div className="md:hidden px-0 ">
                       <button
-                        onClick={() => handleVendorClick(vendor)}
+                        onClick={handleVendorClick}
                         className="w-full text-left md:hidden block p-0 m-0 overflow-hidden "
                       >
                         <div className="md:hidden">
@@ -690,7 +703,7 @@ const Vendors = () => {
                             View Details
                           </Button>
                           <Button
-                            onClick={() => handleVendorClick(vendor)}
+                            onClick={handleVendorClick}
                             className="shiftyng-gradient hover:opacity-90 transition-opacity"
                           >
                             Book Now

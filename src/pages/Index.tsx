@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoginModal } from "@/components/LoginModal";
 import { Calendar } from "@/components/ui/calendar";
+import { useBooking } from "@/context/BookingContext";
 import {
   Select,
   SelectContent,
@@ -32,14 +33,75 @@ import {
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
+const testLocations = [
+  "Bangalore, Karnataka",
+  "Hyderabad, Telangana",
+  "Chennai, Tamil Nadu",
+  "Mumbai, Maharashtra",
+  "Delhi",
+  "Pune, Maharashtra",
+  "Kolkata, West Bengal",
+];
+
+const StaticAutocomplete = ({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  placeholder: string;
+}) => {
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const filtered = testLocations.filter((loc) =>
+    loc.toLowerCase().includes(value.toLowerCase())
+  );
+
+  return (
+    <div className="relative">
+      <input
+        type="text"
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setShowSuggestions(true);
+        }}
+        onFocus={() => setShowSuggestions(true)}
+        onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+        className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
+      />
+      {showSuggestions && value && (
+        <ul className="absolute left-0 right-0 bg-white shadow-lg rounded z-10 max-h-60 overflow-y-auto mt-1 border">
+          {filtered.length > 0 ? (
+            filtered.map((loc) => (
+              <li
+                key={loc}
+                onClick={() => {
+                  onChange(loc);
+                  setShowSuggestions(false);
+                }}
+                className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm"
+              >
+                {loc}
+              </li>
+            ))
+          ) : (
+            <li className="px-4 py-2 text-sm text-gray-400">No results</li>
+          )}
+        </ul>
+      )}
+    </div>
+  );
+};
+
 const Index = () => {
   const navigate = useNavigate();
+  const { booking, setBooking } = useBooking();
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [pickupLocation, setPickupLocation] = useState("");
-  const [dropLocation, setDropLocation] = useState("");
-  const [shiftDate, setShiftDate] = useState<Date>();
-  const [shiftType, setShiftType] = useState("");
+
   const [currentOfferSlide, setCurrentOfferSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -126,16 +188,24 @@ const Index = () => {
   };
 
   const handleSearch = () => {
-    if (!pickupLocation || !dropLocation || !shiftDate || !shiftType) {
+    if (
+      !booking.pickupLocation ||
+      !booking.dropLocation ||
+      !booking.shiftDate ||
+      !booking.shiftType
+    ) {
       alert("Please fill in all fields");
       return;
     }
+
     navigate("/items");
   };
   const swapLocations = () => {
-    const temp = pickupLocation;
-    setPickupLocation(dropLocation);
-    setDropLocation(temp);
+    setBooking((prev) => ({
+      ...prev,
+      pickupLocation: prev.dropLocation,
+      dropLocation: prev.pickupLocation,
+    }));
   };
 
   if (hasSearched) {
@@ -158,7 +228,6 @@ const Index = () => {
           {/* <div className="flex items-center">
             <h1 className="text-2xl font-bold text-primary">Shiftyng</h1>
           </div> */}
-
           <h1
             className="text-[30px] font-bold text-primary font-weight-900"
             style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
@@ -237,11 +306,21 @@ const Index = () => {
                       <label className="text-xs text-gray-500 block mb-1">
                         From
                       </label>
-                      <input
+                      {/* <input
                         placeholder="Pick up Location"
-                        value={pickupLocation}
-                        onChange={(e) => setPickupLocation(e.target.value)}
+                        value={bookingForm.pickupLocation}
+                        onChange={(e) => setBookingForm({...bookingForm, pickupLocation: e.target.value})}
                         className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
+                      /> */}
+                      <StaticAutocomplete
+                        value={booking.pickupLocation}
+                        onChange={(value) =>
+                          setBooking((prev) => ({
+                            ...prev,
+                            pickupLocation: value,
+                          }))
+                        }
+                        placeholder="Pick up Location"
                       />
                     </div>
                   </div>
@@ -263,11 +342,21 @@ const Index = () => {
                       <label className="text-xs text-gray-500 block mb-1">
                         To
                       </label>
-                      <input
+                      {/* <input
                         placeholder="Drop Location"
                         value={dropLocation}
                         onChange={(e) => setDropLocation(e.target.value)}
                         className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
+                      /> */}
+                      <StaticAutocomplete
+                        value={booking.dropLocation}
+                        onChange={(value) =>
+                          setBooking((prev) => ({
+                            ...prev,
+                            dropLocation: value,
+                          }))
+                        }
+                        placeholder="Drop Location"
                       />
                     </div>
                   </div>
@@ -286,13 +375,13 @@ const Index = () => {
                           variant="ghost"
                           className={cn(
                             "w-full justify-start p-0 h-auto font-normal hover:bg-transparent",
-                            !shiftDate && "text-gray-400"
+                            !booking.shiftDate && "text-gray-400"
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           <span className="text-base">
-                            {shiftDate
-                              ? format(shiftDate, "dd MMM, yyyy")
+                            {booking.shiftDate
+                              ? format(booking.shiftDate, "dd MMM, yyyy")
                               : "Select Date"}
                           </span>
                         </Button>
@@ -300,8 +389,19 @@ const Index = () => {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={shiftDate}
-                          onSelect={setShiftDate}
+                          selected={
+                            booking.shiftDate
+                              ? new Date(booking.shiftDate)
+                              : undefined
+                          }
+                          onSelect={(date) => {
+                            if (date) {
+                              setBooking((prev) => ({
+                                ...prev,
+                                shiftDate: date.toISOString(), // ✅ store as ISO string in context
+                              }));
+                            }
+                          }}
                           disabled={(date) => date < new Date()}
                           initialFocus
                           className="pointer-events-auto"
@@ -315,7 +415,12 @@ const Index = () => {
                     <label className="text-xs text-gray-500 block mb-2">
                       Shift Type
                     </label>
-                    <Select value={shiftType} onValueChange={setShiftType}>
+                    <Select
+                      value={booking.shiftType}
+                      onValueChange={(value) =>
+                        setBooking((prev) => ({ ...prev, shiftType: value }))
+                      }
+                    >
                       <SelectTrigger className="w-full p-0 border-none focus:ring-0 text-left bg-transparent h-auto shadow-none">
                         <SelectValue
                           placeholder="Select Type"
@@ -343,11 +448,15 @@ const Index = () => {
                       <label className="text-xs text-gray-500 block mb-1">
                         From
                       </label>
-                      <input
+                      <StaticAutocomplete
+                        value={booking.pickupLocation}
+                        onChange={(value) =>
+                          setBooking((prev) => ({
+                            ...prev,
+                            pickupLocation: value,
+                          }))
+                        }
                         placeholder="Pick up Location"
-                        value={pickupLocation}
-                        onChange={(e) => setPickupLocation(e.target.value)}
-                        className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base"
                       />
                     </div>
                   </div>
@@ -359,11 +468,15 @@ const Index = () => {
                       <label className="text-xs text-gray-500 block mb-1">
                         To
                       </label>
-                      <input
+                      <StaticAutocomplete
+                        value={booking.dropLocation}
+                        onChange={(value) =>
+                          setBooking((prev) => ({
+                            ...prev,
+                            dropLocation: value,
+                          }))
+                        }
                         placeholder="Drop Location"
-                        value={dropLocation}
-                        onChange={(e) => setDropLocation(e.target.value)}
-                        className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base"
                       />
                     </div>
                   </div>
@@ -380,13 +493,13 @@ const Index = () => {
                             variant="ghost"
                             className={cn(
                               "w-full justify-start p-0 h-auto font-normal hover:bg-transparent",
-                              !shiftDate && "text-gray-400"
+                              !booking.shiftDate && "text-gray-400"
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             <span>
-                              {shiftDate
-                                ? format(shiftDate, "dd MMM, yyyy")
+                              {booking.shiftDate
+                                ? format(booking.shiftDate, "dd MMM, yyyy")
                                 : "Select Date"}
                             </span>
                           </Button>
@@ -394,8 +507,19 @@ const Index = () => {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={shiftDate}
-                            onSelect={setShiftDate}
+                            selected={
+                              booking.shiftDate
+                                ? new Date(booking.shiftDate)
+                                : undefined
+                            }
+                            onSelect={(date) => {
+                              if (date) {
+                                setBooking((prev) => ({
+                                  ...prev,
+                                  shiftDate: date.toISOString(), // store as string
+                                }));
+                              }
+                            }}
                             disabled={(date) => date < new Date()}
                             initialFocus
                             className="pointer-events-auto"
@@ -411,7 +535,12 @@ const Index = () => {
                       <label className="text-xs text-gray-500 block mb-1">
                         Shift Type
                       </label>
-                      <Select value={shiftType} onValueChange={setShiftType}>
+                      <Select
+                        value={booking.shiftType}
+                        onValueChange={(value) =>
+                          setBooking((prev) => ({ ...prev, shiftType: value }))
+                        }
+                      >
                         <SelectTrigger className="w-full p-0 border-none focus:ring-0 text-left bg-transparent h-auto shadow-none">
                           <SelectValue placeholder="Select Type" />
                         </SelectTrigger>
