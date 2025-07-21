@@ -4,13 +4,16 @@ import './index.css'
 import { BookingProvider } from './context/BookingContext';
 import { ItemProvider } from './context/ItemContext';
 import {VendorProvider} from './context/VendorContext.tsx'
+import {AuthProvider} from './context/AuthContext.tsx';
 
 createRoot(document.getElementById("root")!).render(
-<BookingProvider>
-    <ItemProvider>
-      <VendorProvider> {/* ✅ Wrap your app with VendorProvider */}
-        <App />
-      </VendorProvider>
-    </ItemProvider>
-  </BookingProvider>
+<AuthProvider>
+    <BookingProvider>
+      <ItemProvider>
+        <VendorProvider>
+          <App />
+        </VendorProvider>
+      </ItemProvider>
+    </BookingProvider>
+  </AuthProvider>
 );

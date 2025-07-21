@@ -98,6 +98,8 @@ const StaticAutocomplete = ({
 
 const Index = () => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [openMobile, setOpenMobile] = useState(false);
   const { booking, setBooking } = useBooking();
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -374,7 +376,7 @@ const Index = () => {
                       <label className="text-xs text-gray-500 block mb-1">
                         Date of Journey
                       </label>
-                      <Popover>
+                      <Popover open={openMobile} onOpenChange={setOpenMobile} >
                         <PopoverTrigger asChild>
                           <Button
                             variant="ghost"
@@ -401,6 +403,7 @@ const Index = () => {
                                   ...prev,
                                   shiftDate: date, // store as Date object
                                 }));
+                                setOpenMobile(false);
                               }
                             }}
                             disabled={(date) => date < new Date()}
@@ -430,9 +433,9 @@ const Index = () => {
                         />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1bhk">One BHK</SelectItem>
-                        <SelectItem value="2bhk">Two BHK</SelectItem>
-                        <SelectItem value="3bhk">Three BHK</SelectItem>
+                        <SelectItem value="1 BHK">One BHK</SelectItem>
+                        <SelectItem value="2 BHK">Two BHK</SelectItem>
+                        <SelectItem value="3 BHK">Three BHK</SelectItem>
                         <SelectItem value="duplex">Duplex</SelectItem>
                       </SelectContent>
                     </Select>
@@ -490,7 +493,7 @@ const Index = () => {
                       <label className="text-xs text-gray-500 block mb-1">
                         Date of Journey
                       </label>
-                      <Popover>
+                      <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
                           <Button
                             variant="ghost"
@@ -517,6 +520,7 @@ const Index = () => {
                                   ...prev,
                                   shiftDate: date, // store as Date object
                                 }));
+                                setOpen(false);
                               }
                             }}
                             disabled={(date) => date < new Date()}

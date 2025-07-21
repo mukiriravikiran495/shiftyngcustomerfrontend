@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { LoginModal } from "@/components/LoginModal";
 import { useBooking } from "@/context/BookingContext";
 import { useItemContext } from "@/context/ItemContext";
 import { useVendorContext } from "@/context/VendorContext";
+import { useAuth } from "@/context/AuthContext";
 
 import {
   CheckCircle,
@@ -25,19 +26,30 @@ import {
   ArrowLeft
 } from "lucide-react";
 
+
+
+
+
 const Confirmation = () => {
+  const fullNameRef = useRef<HTMLInputElement>(null);
+const emailRef = useRef<HTMLInputElement>(null);
+const { custId, token } = useAuth();
+const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { booking } = useBooking();
-   const [hasSearched, setHasSearched] = useState(false);
-    const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { selectedItems, setSelectedItems } = useItemContext();
   const { bookingData, totalItems } = location.state || {};
   const { selectedVendor, setSelectedVendor } = useVendorContext();
   // const [showCustomerForm, setShowCustomerForm] = useState(false);
-  
+  // const [pendingSubmit, setPendingSubmit] = useState(false);
+  const [customerDetails, setCustomerDetails] = useState({
+    name: '',
+    email: ''
+  });
 
-  
 
   const handleConfirmBooking = () => {
     // Check if user is logged in (simulate)
@@ -54,20 +66,28 @@ const Confirmation = () => {
   const processBooking = () => {
     // Simulate booking process
     navigate('/BookingSuccess', {
-      state: {
-        bookingId: 'BK' + Date.now(),
-        bookingData,
-        selectedItems,
-        selectedVendor,
-        // customerDetails
-      }
+        state: {
+      
+      customerDetails, 
+      custId,
+      token
+    }
     });
   };
 
   const handleCustomerSubmit = () => {
     
-      processBooking();
-    
+    if (!customerDetails.name) {
+    fullNameRef.current?.focus();
+    return;
+  }
+  if (!customerDetails.email) {
+    emailRef.current?.focus();
+    return;
+  }
+  
+    processBooking();
+
   };
 
   const totalCost = selectedVendor?.price || 0;
@@ -75,6 +95,8 @@ const Confirmation = () => {
   const finalAmount = totalCost + taxes;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+    
     if (!selectedVendor) {
       const storedVendor = localStorage.getItem("selectedVendor");
       if (storedVendor) {
@@ -99,81 +121,107 @@ const Confirmation = () => {
   }
 
   if (hasSearched) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-black-50 via-white to-purple-50 w-full">
-          <LoginModal
-            isOpen={isLoginOpen}
-            onClose={() => setIsLoginOpen(false)}
-          />
-        </div>
-      );
-    }
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black-50 via-white to-purple-50 w-full">
+        <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)}/>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       {/* Header */}
-            <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-              <div className="w-full px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                  {/* Left section (logo + back button) */}
-                  <div className="flex items-center flex-1">
-                    <div className="lg:hidden">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => navigate("/Items")}
-                        className="mr-3"
-                      >
-                        <ArrowLeft className="h-5 w-5" />
-                      </Button>
-                    </div>
-                    <div>
-            <button
-            className="text-[30px] font-bold text-primary font-weight-900"
-            style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
-            onClick={() => navigate("/")}
-          >
-            <h1>Shiftyng</h1>
-          </button>
-          </div>
-                  </div>
-      
-                  {/* Right section (Login) */}
-                  <div className="flex justify-end flex-1">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsLoginOpen(true)}
-                      className="border-primary text-primary hover:bg-primary hover:text-white"
-                    >
-                      Login
-                    </Button>
-                  </div>
-                </div>
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Left section (logo + back button) */}
+            <div className="flex items-center flex-1">
+              <div className="lg:hidden">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => navigate("/Items")}
+                  className="mr-3"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
               </div>
-            </header>
-            <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+              <div>
+                <button
+                  className="text-[30px] font-bold text-primary font-weight-900"
+                  style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+                  onClick={() => navigate("/")}
+                >
+                  <h1>Shiftyng</h1>
+                </button>
+              </div>
+            </div>
+
+            {/* Right section (Login) */}
+            <div className="flex justify-end flex-1">
+              <Button
+                variant="outline"
+                onClick={() => setIsLoginOpen(true)}
+                className="border-primary text-primary hover:bg-primary hover:text-white"
+              >
+                Login
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
 
       <div className="w-full mx-auto px-4 bg-white sm:px-6 lg:px-8 sm:py-0 lg:py-4 overflow-x-hidden">
         <div className="flex items-center mb-8">
           <div className="hidden lg:block">
             <Button
-            variant="outline"
-            size="icon"
-            onClick={() => navigate("/Vendors")}
-            className="mr-3"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+              variant="outline"
+              size="icon"
+              onClick={() => navigate("/Vendors")}
+              className="mr-3"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
           </div>
-          
+
           <div><h1 className="text-2xl font-bold mt-4 -mb-4 lg:mb-4">Booking Confirmation</h1></div>
         </div>
+
 
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
+
+            {/* Customer Details Form */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <Label htmlFor="fullName" className="text-muted-foreground">Full Name <span className="text-red-500">*</span></Label>
+                <Input
+                ref={fullNameRef}
+                  id="fullName"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={customerDetails.name}
+                  onChange={(e) => setCustomerDetails({ ...customerDetails, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="email" className="text-muted-foreground">Email ID <span className="text-red-500">*</span></Label>
+                <Input
+                ref={emailRef}
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={customerDetails.email}
+                  onChange={(e) => setCustomerDetails({ ...customerDetails, email: e.target.value })}
+                />
+              </div>
+            </div>
+
+
             {/* Booking Details */}
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4 flex items-center">
@@ -272,57 +320,6 @@ const Confirmation = () => {
                 </div>
               </div>
             </Card>
-
-            {/* Customer Details Form */}
-            {/* {showCustomerForm && (
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4 flex items-center">
-                  <User className="h-5 w-5 mr-2 text-primary" />
-                  Customer Details
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input
-                      id="name"
-                      value={customerDetails.name}
-                      onChange={(e) => setCustomerDetails({ ...customerDetails, name: e.target.value })}
-                      placeholder="Enter your full name"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone Number *</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={customerDetails.phone}
-                      onChange={(e) => setCustomerDetails({ ...customerDetails, phone: e.target.value })}
-                      placeholder="Enter your phone number"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={customerDetails.email}
-                      onChange={(e) => setCustomerDetails({ ...customerDetails, email: e.target.value })}
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="alternatePhone">Alternate Phone</Label>
-                    <Input
-                      id="alternatePhone"
-                      type="tel"
-                      value={customerDetails.alternatePhone}
-                      onChange={(e) => setCustomerDetails({ ...customerDetails, alternatePhone: e.target.value })}
-                      placeholder="Alternate phone number"
-                    />
-                  </div>
-                </div>
-              </Card>
-            )} */}
           </div>
 
           {/* Price Summary */}
@@ -369,14 +366,14 @@ const Confirmation = () => {
                   Confirm Booking
                 </Button>
               ) : ( */}
-                <Button
-                  onClick={handleCustomerSubmit}
-                  // disabled={!customerDetails.name || !customerDetails.phone}
-                  className="w-full bg-primary hover:bg-primary/90"
-                >
-                  Submit & Confirm Booking
-                </Button>
-              
+              <Button
+                onClick={handleCustomerSubmit}
+                // disabled={!customerDetails.name || !customerDetails.phone}
+                className="w-full bg-primary hover:bg-primary/90"
+              >
+                Submit & Confirm Booking
+              </Button>
+
 
               <p className="text-xs text-muted-foreground mt-3 text-center">
                 By confirming, you agree to our Terms of Service and Privacy Policy

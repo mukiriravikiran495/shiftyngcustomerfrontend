@@ -10,6 +10,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useBooking } from "@/context/BookingContext";
 import { useItemContext } from "@/context/ItemContext";
 import { useVendorContext } from "@/context/VendorContext";
+
 import {
   ArrowLeft,
   Search,
@@ -37,6 +38,7 @@ const BookingSuccess = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { booking } = useBooking();
+  const { selectedItems } = useItemContext();
   // const { bookingId, bookingData, selectedItems, selectedVendor, customerDetails } = location.state || {};
   const { selectedVendor, setSelectedVendor } = useVendorContext();
   const handleDownloadReceipt = () => {
@@ -52,6 +54,10 @@ const BookingSuccess = () => {
   const handleNewBooking = () => {
     navigate('/');
   };
+
+  const {
+    customerDetails = {}  // ← default to empty object
+  } = location.state || {};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -77,8 +83,14 @@ const BookingSuccess = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Booking Summary</h2>
+          <Card className="p-6 mb-6 ">
+            <div className="text-center ">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-12 h-12 text-green-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-foreground mb-2">Booking Confirmed!</h1>
+              <p className="text-muted-foreground mb-4">Your move has been successfully scheduled</p>
+            </div>
 
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -126,19 +138,47 @@ const BookingSuccess = () => {
               {/* Contact Information */}
               <div>
                 <p className="text-sm text-muted-foreground mb-2">Customer Details</p>
-                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="font-semibold">{customerDetails?.name}</p>
-                    <p className="text-sm text-muted-foreground">{customerDetails?.phone}</p>
+                    <p className="text-sm text-muted-foreground">Full Name</p>
+                    <p className="font-semibold">{customerDetails.name}</p>
+                    {/* <p className="text-sm text-muted-foreground">{customerDetails?.phone}</p> */}
                   </div>
-                  {customerDetails?.email && (
+                  {customerDetails.email && (
                     <div>
                       <p className="text-sm text-muted-foreground">Email</p>
                       <p className="font-semibold">{customerDetails.email}</p>
                     </div>
                   )}
-                </div> */}
+                </div>
               </div>
+
+              {/* SelectedItems  */}
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Selected Items</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+                  {selectedItems.length === 0 ? (
+                    <p>No items selected.</p>
+                  ) : (
+                    selectedItems.map((item) => (
+                      <div key={item.id} className="border p-2 rounded shadow-sm flex gap-4 items-center">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                        <div>
+                          <p className="font-medium">{item.name}</p>
+                          <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                          <p className="text-sm text-gray-400">Category: {item.category}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+
             </div>
           </Card>
 
