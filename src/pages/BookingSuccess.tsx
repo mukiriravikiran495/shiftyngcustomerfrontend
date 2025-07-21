@@ -7,6 +7,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { LoginModal } from "@/components/LoginModal";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useBooking } from "@/context/BookingContext";
+import { useItemContext } from "@/context/ItemContext";
+import { useVendorContext } from "@/context/VendorContext";
 import {
   ArrowLeft,
   Search,
@@ -33,7 +36,9 @@ import { Label } from "@/components/ui/label";
 const BookingSuccess = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { bookingId, bookingData, selectedItems, selectedVendor, customerDetails } = location.state || {};
+  const { booking } = useBooking();
+  // const { bookingId, bookingData, selectedItems, selectedVendor, customerDetails } = location.state || {};
+  const { selectedVendor, setSelectedVendor } = useVendorContext();
   const handleDownloadReceipt = () => {
     // Implementation for downloading receipt
     console.log("Downloading receipt...");
@@ -55,49 +60,43 @@ const BookingSuccess = () => {
           <div className="flex justify-between items-center h-16">
             {/* Left section (logo + back button) */}
             <div className="flex items-center flex-1">
-              <div className="lg:hidden">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => navigate("/BookingDetails")}
-                  className="mr-3"
+
+              <div>
+                <button
+                  className="text-[30px] font-bold text-primary font-weight-900"
+                  style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+                  onClick={() => navigate("/")}
                 >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
+                  <h1>Shiftyng</h1>
+                </button>
               </div>
-              <h1
-                className="text-[30px] font-bold text-primary font-weight-900"
-                style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
-              >
-                Shiftyng
-              </h1>
             </div>
           </div>
         </div>
       </header>
 
-        <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-        <Card className="p-6 mb-6">
+          <Card className="p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Booking Summary</h2>
-            
+
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">From</p>
-                  <p className="font-semibold">{bookingData?.pickupLocation}</p>
+                  <p className="font-semibold">{booking.pickupLocation}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">To</p>
-                  <p className="font-semibold">{bookingData?.dropLocation}</p>
+                  <p className="font-semibold">{booking.dropLocation}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Moving Date</p>
-                  <p className="font-semibold">{bookingData?.shiftDate}</p>
+                  <p className="font-semibold">{booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Service Type</p>
-                  <p className="font-semibold capitalize">{bookingData?.shiftType}</p>
+                  <p className="font-semibold capitalize">{booking.shiftType}</p>
                 </div>
               </div>
 
@@ -107,8 +106,8 @@ const BookingSuccess = () => {
               <div>
                 <p className="text-sm text-muted-foreground mb-2">Service Provider</p>
                 <div className="flex items-center space-x-3">
-                  <img 
-                    src={selectedVendor?.image} 
+                  <img
+                    src={selectedVendor?.image}
                     alt={selectedVendor?.name}
                     className="w-12 h-12 rounded-lg object-cover"
                   />
@@ -127,7 +126,7 @@ const BookingSuccess = () => {
               {/* Contact Information */}
               <div>
                 <p className="text-sm text-muted-foreground mb-2">Customer Details</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="font-semibold">{customerDetails?.name}</p>
                     <p className="text-sm text-muted-foreground">{customerDetails?.phone}</p>
@@ -138,7 +137,7 @@ const BookingSuccess = () => {
                       <p className="font-semibold">{customerDetails.email}</p>
                     </div>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
           </Card>
@@ -200,10 +199,10 @@ const BookingSuccess = () => {
             </div>
           </Card>
         </div>
-       </div>
-       </div> 
+      </div>
+    </div>
 
-    
+
   );
 };
 

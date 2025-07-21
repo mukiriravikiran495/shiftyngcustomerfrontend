@@ -4,7 +4,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 export type BookingData = {
   pickupLocation: string;
   dropLocation: string;
-  shiftDate: string;
+  shiftDate: Date | null;
   shiftType: string;
 };
 
@@ -12,7 +12,7 @@ export type BookingData = {
 const defaultBooking: BookingData = {
   pickupLocation: "",
   dropLocation: "",
-  shiftDate: "",
+  shiftDate: null,
   shiftType: "",
 };
 

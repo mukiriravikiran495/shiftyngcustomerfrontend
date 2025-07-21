@@ -228,12 +228,16 @@ const Index = () => {
           {/* <div className="flex items-center">
             <h1 className="text-2xl font-bold text-primary">Shiftyng</h1>
           </div> */}
-          <h1
+          <div>
+            <button
             className="text-[30px] font-bold text-primary font-weight-900"
             style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+            onClick={() => navigate("/")}
           >
-            Shiftyng
-          </h1>
+            <h1>Shiftyng</h1>
+          </button>
+          </div>
+          
 
           {/* Right Side: Nav + Login */}
           <div className=" md:flex items-center space-x-8 ">
@@ -365,53 +369,47 @@ const Index = () => {
                 {/* Date and Type Row */}
                 <div className="flex border-b border-gray-200">
                   {/* Date Picker */}
-                  <div className="flex-1 px-6 py-4 border-r border-gray-200">
-                    <label className="text-xs text-gray-500 block mb-2">
-                      Date of Journey
-                    </label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className={cn(
-                            "w-full justify-start p-0 h-auto font-normal hover:bg-transparent",
-                            !booking.shiftDate && "text-gray-400"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          <span className="text-base">
-                            {booking.shiftDate
-                              ? format(booking.shiftDate, "dd MMM, yyyy")
-                              : "Select Date"}
-                          </span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={
-                            booking.shiftDate
-                              ? new Date(booking.shiftDate)
-                              : undefined
-                          }
-                          onSelect={(date) => {
-                            if (date) {
-                              const day = String(date.getDate()).padStart(2, "0");
-                              const month = date.toLocaleString("default", { month: "short" });
-                              const year = date.getFullYear();
-                              const formattedDate = `${day}-${month}-${year}`;
-                              setBooking((prev) => ({
-                                ...prev,
-                                shiftDate: formattedDate, // ✅ store as ISO string in context
-                              }));
-                            }
-                          }}
-                          disabled={(date) => date < new Date()}
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
+                  <div className="flex items-center px-6 py-6 lg:py-4">
+                    <div className="flex-1">
+                      <label className="text-xs text-gray-500 block mb-1">
+                        Date of Journey
+                      </label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className={cn(
+                              "w-full justify-start p-0 h-auto font-normal hover:bg-transparent",
+                              !booking.shiftDate && "text-gray-400"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <span>
+                              {booking.shiftDate instanceof Date && !isNaN(booking.shiftDate.getTime())
+                                ? format(booking.shiftDate, "dd MMM, yyyy")
+                                : "Select Date"}
+                            </span>
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={booking.shiftDate ?? undefined}
+                            onSelect={(date) => {
+                              if (date) {
+                                setBooking((prev) => ({
+                                  ...prev,
+                                  shiftDate: date, // store as Date object
+                                }));
+                              }
+                            }}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                            className="pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                   </div>
 
                   {/* Shift Type */}
@@ -466,6 +464,7 @@ const Index = () => {
                   </div>
 
                   {/* Drop Location */}
+                  {/* Drop Location */}
                   <div className="flex items-center px-6 py-6 lg:py-4">
                     <MapPin className="w-5 h-5 text-red-600 mr-3" />
                     <div className="flex-1">
@@ -502,7 +501,7 @@ const Index = () => {
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             <span>
-                              {booking.shiftDate
+                              {booking.shiftDate instanceof Date && !isNaN(booking.shiftDate.getTime())
                                 ? format(booking.shiftDate, "dd MMM, yyyy")
                                 : "Select Date"}
                             </span>
@@ -511,20 +510,12 @@ const Index = () => {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={
-                              booking.shiftDate
-                                ? new Date(booking.shiftDate)
-                                : undefined
-                            }
+                            selected={booking.shiftDate ?? undefined}
                             onSelect={(date) => {
                               if (date) {
-                                const day = String(date.getDate()).padStart(2, "0");
-                                const month = date.toLocaleString("default", { month: "short" });
-                                const year = date.getFullYear();
-                                const formattedDate = `${day}-${month}-${year}`;
                                 setBooking((prev) => ({
                                   ...prev,
-                                  shiftDate: formattedDate, // store as string
+                                  shiftDate: date, // store as Date object
                                 }));
                               }
                             }}
@@ -536,6 +527,7 @@ const Index = () => {
                       </Popover>
                     </div>
                   </div>
+
 
                   {/* Shift Type */}
                   <div className="flex items-center px-6 py-6 lg:py-4">
@@ -553,10 +545,10 @@ const Index = () => {
                           <SelectValue placeholder="Select Type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="1bhk">One BHK</SelectItem>
-                          <SelectItem value="2bhk">Two BHK</SelectItem>
-                          <SelectItem value="3bhk">Three BHK</SelectItem>
-                          <SelectItem value="duplex">Duplex</SelectItem>
+                          <SelectItem value="1 BHK">One BHK</SelectItem>
+                          <SelectItem value="2 BHK">Two BHK</SelectItem>
+                          <SelectItem value="3 BHK">Three BHK</SelectItem>
+                          <SelectItem value="Office">Office</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

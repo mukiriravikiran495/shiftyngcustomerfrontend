@@ -6,6 +6,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { LoginModal } from "@/components/LoginModal";
 import { useBooking } from "@/context/BookingContext";
+import { useVendorContext } from "@/context/VendorContext";
+import type { Vendor } from "@/context/VendorContext";
+
 import {
   ArrowLeft,
   Search,
@@ -22,6 +25,7 @@ import MobileFilters from "@/components/MobileFilters";
 
 const Vendors = () => {
   const navigate = useNavigate();
+  const { setSelectedVendor } = useVendorContext();
   const location = useLocation();
   const { booking } = useBooking();
   const [hasSearched, setHasSearched] = useState(false);
@@ -35,9 +39,9 @@ const Vendors = () => {
     vehicleType: [] as string[],
   });
 
-  const handleVendorClick = () => {
-    // Navigate to vendor detail page (adjust the route as needed)
-    navigate("/BookingDetails"), {};
+  const handleVendorClick = (vendor: Vendor) => {
+    setSelectedVendor(vendor);   // set in context
+    navigate("/BookingDetails"); // go to booking confirmation page
   };
 
   const vendors = [
@@ -217,12 +221,15 @@ const Vendors = () => {
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
               </div>
-              <h1
-                className="text-[30px] font-bold text-primary font-weight-900"
-                style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
-              >
-                Shiftyng
-              </h1>
+              <div>
+                <button
+                  className="text-[30px] font-bold text-primary font-weight-900"
+                  style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+                  onClick={() => navigate("/")}
+                >
+                  <h1>Shiftyng</h1>
+                </button>
+              </div>
             </div>
 
             {/* Right section (Login) */}
@@ -271,7 +278,7 @@ const Vendors = () => {
                   {/* Single Row for Shift Date and Shift Type */}
                   <div className="flex justify-between gap-4 text-gray-600 text-xs px-4">
                     <span>
-                      <span className="font-medium">Shift Date:</span> {booking.shiftDate}
+                      <span className="font-medium">Shift Date:</span> {booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}
                     </span>
                     <span>
                       <span className="font-medium">Shift Type:</span> {booking.shiftType}
@@ -315,7 +322,7 @@ const Vendors = () => {
                   <span className="font-medium text-gray-600 mr-2">
                     Shift Date:
                   </span>
-                  <span className=" ml-1">{booking.shiftDate}</span>
+                  <span className=" ml-1">{booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}</span>
                 </div>
 
                 {/* Type */}
@@ -473,7 +480,7 @@ const Vendors = () => {
           </div>
 
           {/* Vendors List */}
-          <div className="flex-1 w-32 ">
+          <div className="flex-1 w-full ">
             <div className="lg:mb-4">
               <div className="hidden lg:block flex flex-col sm:flex-row sm:items-center justify-between gap-3 ">
                 <select className="border rounded-md px-3 py-2 text-sm bg-white w-full sm:w-auto">
@@ -486,7 +493,7 @@ const Vendors = () => {
               </div>
             </div>
 
-            <div className="space-y-3 sm:w-32 lg:w-full border-1 shadow-lg ">
+            <div className="space-y-3 sm:w-full lg:w-full border-1 shadow-lg ">
               {filteredVendors.map((vendor) => (
                 <Card
                   key={vendor.id}
@@ -497,7 +504,7 @@ const Vendors = () => {
                     {/* Mobile Layout - New Design */}
                     <div className="md:hidden px-0 ">
                       <button
-                        onClick={handleVendorClick}
+                        onClick={() => handleVendorClick(vendor)}
                         className="w-full text-left md:hidden block p-0 m-0 overflow-hidden "
                       >
                         <div className="md:hidden">
@@ -698,7 +705,7 @@ const Vendors = () => {
                             View Details
                           </Button>
                           <Button
-                            onClick={handleVendorClick}
+                            onClick={() => handleVendorClick(vendor)}
                             className="shiftyng-gradient hover:opacity-90 transition-opacity"
                           >
                             Book Now

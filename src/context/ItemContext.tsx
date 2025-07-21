@@ -1,22 +1,32 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-export type SelectedItem = {
+// Define your item type (adjust as per your data)
+export type Item = {
   id: string;
   name: string;
   image: string;
-  category: string;
   quantity: number;
+  category: string;
 };
 
 type ItemContextType = {
-  selectedItems: SelectedItem[];
-  setSelectedItems: React.Dispatch<React.SetStateAction<SelectedItem[]>>;
+  selectedItems: Item[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<Item[]>>;
 };
 
 const ItemContext = createContext<ItemContextType | undefined>(undefined);
 
 export const ItemProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<Item[]>(() => {
+    // 👇 Load from localStorage on first load
+    const stored = localStorage.getItem("selectedItems");
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  // 👇 Save to localStorage whenever selectedItems changes
+  useEffect(() => {
+    localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
+  }, [selectedItems]);
 
   return (
     <ItemContext.Provider value={{ selectedItems, setSelectedItems }}>
@@ -27,6 +37,8 @@ export const ItemProvider = ({ children }: { children: ReactNode }) => {
 
 export const useItemContext = () => {
   const context = useContext(ItemContext);
-  if (!context) throw new Error("useItemContext must be used within ItemProvider");
+  if (!context) {
+    throw new Error("useItemContext must be used within an ItemProvider");
+  }
   return context;
 };

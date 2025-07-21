@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { LoginModal } from "@/components/LoginModal";
 import { useBooking } from "@/context/BookingContext";
 import { useItemContext } from "@/context/ItemContext";
-import type { SelectedItem } from "@/context/ItemContext";
+
 
 import {
   ArrowLeft,
@@ -223,12 +223,15 @@ const Items = () => {
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
               </div>
-              <h1
-                className="text-[30px] font-bold text-primary font-weight-900"
-                style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
-              >
-                Shiftyng
-              </h1>
+              <div>
+                <button
+                  className="text-[30px] font-bold text-primary font-weight-900"
+                  style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+                  onClick={() => navigate("/")}
+                >
+                  <h1>Shiftyng</h1>
+                </button>
+              </div>
             </div>
 
             {/* Right section (Login) */}
@@ -277,7 +280,7 @@ const Items = () => {
                   {/* Single Row for Shift Date and Shift Type */}
                   <div className="flex justify-between gap-4 text-gray-600 text-xs px-4">
                     <span>
-                      <span className="font-medium">Shift Date:</span> {booking.shiftDate}
+                      <span className="font-medium">Shift Date:</span> {booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}
                     </span>
                     <span>
                       <span className="font-medium">Shift Type:</span> {booking.shiftType}
@@ -321,7 +324,7 @@ const Items = () => {
                   <span className="font-medium text-gray-600 mr-2">
                     Shift Date:
                   </span>
-                  <span className=" ml-1">{booking.shiftDate}</span>
+                  <span className=" ml-1 ">{booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}</span>
                 </div>
 
                 {/* Type */}

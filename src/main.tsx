@@ -3,11 +3,14 @@ import App from './App.tsx'
 import './index.css'
 import { BookingProvider } from './context/BookingContext';
 import { ItemProvider } from './context/ItemContext';
+import {VendorProvider} from './context/VendorContext.tsx'
 
 createRoot(document.getElementById("root")!).render(
 <BookingProvider>
-    <ItemProvider> {/* ✅ wrap App inside this */}
-      <App />
+    <ItemProvider>
+      <VendorProvider> {/* ✅ Wrap your app with VendorProvider */}
+        <App />
+      </VendorProvider>
     </ItemProvider>
   </BookingProvider>
 );
