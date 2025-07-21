@@ -26,15 +26,23 @@ import {
   ArrowLeft
 } from "lucide-react";
 
-
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 
 
 const Confirmation = () => {
   const fullNameRef = useRef<HTMLInputElement>(null);
-const emailRef = useRef<HTMLInputElement>(null);
-const { custId, token } = useAuth();
-const [showLogin, setShowLogin] = useState(false);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const { custId, token } = useAuth();
+  const [showLogin, setShowLogin] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { booking } = useBooking();
@@ -66,27 +74,28 @@ const [showLogin, setShowLogin] = useState(false);
   const processBooking = () => {
     // Simulate booking process
     navigate('/BookingSuccess', {
-        state: {
-      
-      customerDetails, 
-      custId,
-      token
-    }
+      state: {
+
+        customerDetails,
+        custId,
+        token
+      }
     });
   };
 
   const handleCustomerSubmit = () => {
-    
+
     if (!customerDetails.name) {
-    fullNameRef.current?.focus();
-    return;
-  }
-  if (!customerDetails.email) {
-    emailRef.current?.focus();
-    return;
-  }
-  
-    processBooking();
+      fullNameRef.current?.focus();
+      return;
+    }
+    if (!customerDetails.email) {
+      emailRef.current?.focus();
+      return;
+    }
+
+    setShowConfirmModal(true);
+
 
   };
 
@@ -96,7 +105,7 @@ const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    
+
     if (!selectedVendor) {
       const storedVendor = localStorage.getItem("selectedVendor");
       if (storedVendor) {
@@ -123,7 +132,7 @@ const [showLogin, setShowLogin] = useState(false);
   if (hasSearched) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black-50 via-white to-purple-50 w-full">
-        <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)}/>
+        <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       </div>
     );
   }
@@ -200,7 +209,7 @@ const [showLogin, setShowLogin] = useState(false);
               <div>
                 <Label htmlFor="fullName" className="text-muted-foreground">Full Name <span className="text-red-500">*</span></Label>
                 <Input
-                ref={fullNameRef}
+                  ref={fullNameRef}
                   id="fullName"
                   type="text"
                   placeholder="Enter your full name"
@@ -211,7 +220,7 @@ const [showLogin, setShowLogin] = useState(false);
               <div>
                 <Label htmlFor="email" className="text-muted-foreground">Email ID <span className="text-red-500">*</span></Label>
                 <Input
-                ref={emailRef}
+                  ref={emailRef}
                   id="email"
                   type="email"
                   placeholder="Enter your email"
@@ -373,6 +382,48 @@ const [showLogin, setShowLogin] = useState(false);
               >
                 Submit & Confirm Booking
               </Button>
+
+              <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirm Booking</DialogTitle>
+
+                    {/* Line 1: From → To */}
+                    <p className="mt-2 text-sm text-gray-700">
+                      <strong>{booking.pickupLocation}</strong> → <strong>{booking.dropLocation}</strong>
+                    </p>
+
+                    {/* Line 2: Date and Shift */}
+                    <p className="text-sm text-gray-700">
+                      <strong>
+                        {booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}
+                      </strong>{" "}
+                      ({booking.shiftType} shift)
+                    </p>
+
+                    {/* Line 3: Proceed? */}
+                    <p className="mt-2 text-sm font-medium text-gray-900">Proceed?</p>
+                  </DialogHeader>
+
+                  <DialogFooter className="mt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowConfirmModal(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className="bg-primary"
+                      onClick={() => {
+                        setShowConfirmModal(false);
+                        processBooking(); // your existing logic
+                      }}
+                    >
+                      Confirm
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
 
 
               <p className="text-xs text-muted-foreground mt-3 text-center">
