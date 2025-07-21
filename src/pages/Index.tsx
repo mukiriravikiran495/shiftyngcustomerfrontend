@@ -224,7 +224,7 @@ const Index = () => {
   return (
     <div className="w-full bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
+      <header className="bg-white  shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
         <div className="flex justify-between items-center h-16">
           {/* Left Side: Logo */}
           {/* <div className="flex items-center">
@@ -245,7 +245,7 @@ const Index = () => {
           <div className=" md:flex items-center space-x-8 ">
             <a
               href="#offers"
-              className=" hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
+              className=" hidden lg:block text-[#BA1C1C]  hover:text-primary transition-colors"
             >
               Offers
             </a>
@@ -255,14 +255,6 @@ const Index = () => {
             >
               Need Help ?
             </a>
-
-            {/* <Button
-              variant="outline"
-              onClick={() => setIsLoginOpen(true)}
-                      className="bg-white font-bold  text-[#BA1C1C] px-6 py-2 w-full sm:w-32 rounded-lg transition-all duration-200 hover:scale-105"
-                    >
-              Login
-            </Button> */}
             <div className="flex justify-end flex-1">
               <Button
                 variant="outline"
@@ -275,6 +267,8 @@ const Index = () => {
           </div>
         </div>
       </header>
+
+      
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Hero Section */}
       <section
