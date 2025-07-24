@@ -116,7 +116,7 @@ const GooglePlacesAutocomplete = ({
       autocompleteRef.current = new google.maps.places.Autocomplete(
         inputRef.current,
         {
-          types: ["geocode"],
+          // types: ["geocode"],
           componentRestrictions: { country: "in" }, // Optional: restrict to India
         }
       );
