@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { LoginModal } from "@/components/LoginModal";
 import { Calendar } from "@/components/ui/calendar";
 import { useBooking } from "@/context/BookingContext";
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import {
   Select,
   SelectContent,
@@ -43,7 +44,62 @@ const testLocations = [
   "Kolkata, West Bengal",
 ];
 
-const StaticAutocomplete = ({
+// const StaticAutocomplete = ({
+//   value,
+//   onChange,
+//   placeholder,
+// }: {
+//   value: string;
+//   onChange: (val: string) => void;
+//   placeholder: string;
+// }) => {
+//   const [showSuggestions, setShowSuggestions] = useState(false);
+
+//   const filtered = testLocations.filter((loc) =>
+//     loc.toLowerCase().includes(value.toLowerCase())
+//   );
+
+//   return (
+//     <div className="relative">
+//       <input
+//         type="text"
+//         value={value}
+//         placeholder={placeholder}
+//         onChange={(e) => {
+//           onChange(e.target.value);
+//           setShowSuggestions(true);
+//         }}
+//         onFocus={() => setShowSuggestions(true)}
+//         onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+//         className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
+//       />
+//       {showSuggestions && value && (
+//         <ul className="absolute left-0 right-0 bg-white shadow-lg rounded z-10 max-h-60 overflow-y-auto mt-1 border">
+//           {filtered.length > 0 ? (
+//             filtered.map((loc) => (
+//               <li
+//                 key={loc}
+//                 onMouseDown={() => {
+//                   onChange(loc);
+//                   setShowSuggestions(false);
+//                 }}
+//                 className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm"
+//               >
+//                 {loc}
+//               </li>
+//             ))
+//           ) : (
+//             <li className="px-4 py-2 text-sm text-gray-400">No results</li>
+//           )}
+//         </ul>
+//       )}
+//     </div>
+//   );
+// };
+
+import { useRef, useEffect } from "react";
+
+const GooglePlacesAutocomplete = ({
   value,
   onChange,
   placeholder,
@@ -52,49 +108,40 @@ const StaticAutocomplete = ({
   onChange: (val: string) => void;
   placeholder: string;
 }) => {
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
-  const filtered = testLocations.filter((loc) =>
-    loc.toLowerCase().includes(value.toLowerCase())
-  );
+  useEffect(() => {
+    if (window.google && inputRef.current) {
+      autocompleteRef.current = new google.maps.places.Autocomplete(
+        inputRef.current,
+        {
+          types: ["geocode"],
+          componentRestrictions: { country: "in" }, // Optional: restrict to India
+        }
+      );
+
+      autocompleteRef.current.addListener("place_changed", () => {
+        const place = autocompleteRef.current?.getPlace();
+        if (place && place.formatted_address) {
+          onChange(place.formatted_address);
+        }
+      });
+    }
+  }, []);
 
   return (
-    <div className="relative">
-      <input
-        type="text"
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => {
-          onChange(e.target.value);
-          setShowSuggestions(true);
-        }}
-        onFocus={() => setShowSuggestions(true)}
-        onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-        className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
-      />
-      {showSuggestions && value && (
-        <ul className="absolute left-0 right-0 bg-white shadow-lg rounded z-10 max-h-60 overflow-y-auto mt-1 border">
-          {filtered.length > 0 ? (
-            filtered.map((loc) => (
-              <li
-                key={loc}
-                onMouseDown={() => {
-                  onChange(loc);
-                  setShowSuggestions(false);
-                }}
-                className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm"
-              >
-                {loc}
-              </li>
-            ))
-          ) : (
-            <li className="px-4 py-2 text-sm text-gray-400">No results</li>
-          )}
-        </ul>
-      )}
-    </div>
+    <input
+      ref={inputRef}
+      type="text"
+      placeholder={placeholder}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
+    />
   );
 };
+
 
 const Index = () => {
   const navigate = useNavigate();
@@ -103,7 +150,7 @@ const Index = () => {
   const { booking, setBooking } = useBooking();
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const [currentOfferSlide, setCurrentOfferSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -222,6 +269,7 @@ const Index = () => {
   }
 
   return (
+  <LoadScript googleMapsApiKey={googleMapsApiKey} libraries={["places"]}>
     <div className="w-full bg-background">
       {/* Header */}
       <header className="bg-white  shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
@@ -232,14 +280,14 @@ const Index = () => {
           </div> */}
           <div>
             <button
-            className="text-[30px] font-bold text-primary font-weight-900"
-            style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
-            onClick={() => navigate("/")}
-          >
-            <h1>Shiftyng</h1>
-          </button>
+              className="text-[30px] font-bold text-primary font-weight-900"
+              style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+              onClick={() => navigate("/")}
+            >
+              <h1>Shiftyng</h1>
+            </button>
           </div>
-          
+
 
           {/* Right Side: Nav + Login */}
           <div className=" md:flex items-center space-x-8 ">
@@ -268,7 +316,7 @@ const Index = () => {
         </div>
       </header>
 
-      
+
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Hero Section */}
       <section
@@ -312,7 +360,7 @@ const Index = () => {
                         onChange={(e) => setBookingForm({...bookingForm, pickupLocation: e.target.value})}
                         className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
                       /> */}
-                      <StaticAutocomplete
+                      <GooglePlacesAutocomplete
                         value={booking.pickupLocation}
                         onChange={(value) =>
                           setBooking((prev) => ({
@@ -348,7 +396,7 @@ const Index = () => {
                         onChange={(e) => setDropLocation(e.target.value)}
                         className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
                       /> */}
-                      <StaticAutocomplete
+                      <GooglePlacesAutocomplete
                         value={booking.dropLocation}
                         onChange={(value) =>
                           setBooking((prev) => ({
@@ -447,7 +495,18 @@ const Index = () => {
                       <label className="text-xs text-gray-500 block mb-1">
                         From
                       </label>
-                      <StaticAutocomplete
+                      {/* <StaticAutocomplete
+                        value={booking.pickupLocation}
+                        onChange={(value) =>
+                          setBooking((prev) => ({
+                            ...prev,
+                            pickupLocation: value,
+                          }))
+                        }
+                        placeholder="Pick up Location"
+                      /> */}
+
+                      <GooglePlacesAutocomplete
                         value={booking.pickupLocation}
                         onChange={(value) =>
                           setBooking((prev) => ({
@@ -457,6 +516,7 @@ const Index = () => {
                         }
                         placeholder="Pick up Location"
                       />
+
                     </div>
                   </div>
 
@@ -468,7 +528,7 @@ const Index = () => {
                       <label className="text-xs text-gray-500 block mb-1">
                         To
                       </label>
-                      <StaticAutocomplete
+                      <GooglePlacesAutocomplete
                         value={booking.dropLocation}
                         onChange={(value) =>
                           setBooking((prev) => ({
@@ -781,6 +841,7 @@ const Index = () => {
         </div>
       </footer>
     </div>
+    </LoadScript>
   );
 };
 
