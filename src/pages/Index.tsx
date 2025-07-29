@@ -272,8 +272,8 @@ const Index = () => {
   <LoadScript googleMapsApiKey={googleMapsApiKey} libraries={["places"]}>
     <div className="w-full bg-background">
       {/* Header */}
-      <header className="bg-white  shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
-        <div className="flex justify-between items-center h-16">
+      <header className="bg-white  shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16 ">
+        <div className="flex justify-between items-center h-16 ">
           {/* Left Side: Logo */}
           {/* <div className="flex items-center">
             <h1 className="text-2xl font-bold text-primary">Shiftyng</h1>
@@ -320,20 +320,19 @@ const Index = () => {
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       {/* Hero Section */}
       <section
-        className="hero-bg py-20"
+        className="hero-bg py-20 bg-[#F3F3F3]"
         style={{
-          backgroundImage: "url('/icons/hero.jpg')",
+          // backgroundImage: "url('/icons/hero.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundBlendMode: "overlay",
-        }}
-      >
+        }}>
         <div className="w-full mx-auto sm:px-6 lg:px-4 ">
           <div className=" text-center mb-10">
-            <h2 className=" text-4xl md:text-5xl font-bold text-[#BA1C1C] lg:text-white mb-4">
+            <h2 className=" text-4xl md:text-5xl font-bold text-[#BA1C1C] lg:text-[#000000] mb-4">
               Moving Made Simple
             </h2>
-            <p className=" text-xl text-[#FFFFFF] lg:text-[#FFFFFF]">
+            <p className=" text-xl text-[#FFFFFF] lg:text-[#000000]">
               Find trusted packers and movers for your next move
             </p>
           </div>
@@ -411,7 +410,7 @@ const Index = () => {
                 </div>
 
                 {/* Date and Type Row */}
-                <div className="flex border-b border-gray-200">
+                <div className="flex border-b border-gray-500 ">
                   {/* Date Picker */}
                   <div className="flex items-center px-6 py-6 lg:py-4">
                     <div className="flex-1">
@@ -631,7 +630,7 @@ const Index = () => {
       </section>
 
       {/* Offers Section */}
-      <section id="offers" className="py-16 bg-gray-50">
+      <section id="offers" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h3 className="text-3xl font-bold text-center text-gray-900 mb-12">
             Special Offers

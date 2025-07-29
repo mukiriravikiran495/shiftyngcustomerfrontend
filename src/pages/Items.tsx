@@ -261,7 +261,7 @@ const Items = () => {
           <div className="bg-white rounded-2xl border shadow-sm p-4 sm:p-6 lg:p-8 w-full">
             <div className="w-full">
               {/* Mobile Layout */}
-              <div className="md:hidden h-18 -mt-2 flex items-start gap-2 text-sm ">
+              <div className="md:hidden px-2 py-2 space-y-2 bg-white rounded-xl shadow-sm text-sm w-full ">
                 {/* Left Column: Back Button */}
                 <div className="hidden lg:block">
                   <Button
@@ -275,7 +275,7 @@ const Items = () => {
 
                 {/* Right Column: All Details stacked vertically */}
                 <div className="md:hidden px-2 h-16 space-y-2 text-sm bg-white">
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-gray-600 truncate">
                     <div className="w-2 h-2 bg-green-500 rounded-full" />
                     <span className="truncate">{booking.pickupLocation}</span>
                   </div>
