@@ -11,6 +11,7 @@ import { useBooking } from "@/context/BookingContext";
 import { useItemContext } from "@/context/ItemContext";
 import { useVendorContext } from "@/context/VendorContext";
 import { useAuth } from "@/context/AuthContext";
+import { ProfileDropdown } from "@/components/ProfileDropdown";
 
 import {
   CheckCircle,
@@ -58,6 +59,31 @@ const Confirmation = () => {
     email: ''
   });
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const savedMobile = localStorage.getItem("mobileNumber");
+    if (savedMobile) {
+      setIsLoggedIn(true);
+      setMobileNumber(savedMobile);
+    }
+  }, []);
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("mobileNumber");
+    setIsLoggedIn(false);
+    setMobileNumber("");
+  };
+
+  const [mobileNumber, setMobileNumber] = useState("");
+
+  const handleLoginSuccess = (mobile: string) => {
+    setMobileNumber(mobile);
+    setIsLoggedIn(true);
+    setIsLoginOpen(false);
+  };
+
 
   const handleConfirmBooking = () => {
     // Check if user is logged in (simulate)
@@ -91,6 +117,12 @@ const Confirmation = () => {
     }
     if (!customerDetails.email) {
       emailRef.current?.focus();
+      return;
+    }
+
+    const mobileNumber = localStorage.getItem("mobileNumber");
+    if (!mobileNumber) {
+      setIsLoginOpen(true); // <-- open login modal here
       return;
     }
 
@@ -132,7 +164,7 @@ const Confirmation = () => {
   if (hasSearched) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black-50 via-white to-purple-50 w-full">
-        <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+        <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLoginSuccess={handleLoginSuccess} />
       </div>
     );
   }
@@ -141,46 +173,54 @@ const Confirmation = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Left section (logo + back button) */}
-            <div className="flex items-center flex-1">
-              <div className="lg:hidden">
+      <header className="bg-white shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
+        <div className="flex justify-between items-center h-16">
+          {/* Left Side: Logo */}
+          <div>
+            <button
+              className="text-[30px] font-bold text-primary font-weight-900"
+              style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+              onClick={() => navigate("/")}
+            >
+              <h1>Shiftyng</h1>
+            </button>
+          </div>
+
+          {/* Right Side: Nav + Login/Profile */}
+          <div className="md:flex items-center space-x-8">
+            <a
+              href="#offers"
+              className="hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
+            >
+              Offers
+            </a>
+            <a
+              href="#help"
+              className="hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
+            >
+              Need Help ?
+            </a>
+
+            <div className="flex justify-end flex-1">
+              {isLoggedIn ? (
+                <ProfileDropdown
+                  mobile={mobileNumber}
+                  onLogout={handleLogout}
+                />
+              ) : (
                 <Button
                   variant="outline"
-                  size="icon"
-                  onClick={() => navigate("/Items")}
-                  className="mr-3"
+                  onClick={() => setIsLoginOpen(true)}
+                  className="border-primary text-primary hover:bg-primary hover:text-white"
                 >
-                  <ArrowLeft className="h-5 w-5" />
+                  Login
                 </Button>
-              </div>
-              <div>
-                <button
-                  className="text-[30px] font-bold text-primary font-weight-900"
-                  style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
-                  onClick={() => navigate("/")}
-                >
-                  <h1>Shiftyng</h1>
-                </button>
-              </div>
-            </div>
-
-            {/* Right section (Login) */}
-            <div className="flex justify-end flex-1">
-              <Button
-                variant="outline"
-                onClick={() => setIsLoginOpen(true)}
-                className="border-primary text-primary hover:bg-primary hover:text-white"
-              >
-                Login
-              </Button>
+              )}
             </div>
           </div>
         </div>
       </header>
-      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLoginSuccess={handleLoginSuccess} />
 
       <div className="w-full mx-auto px-4 bg-white sm:px-6 lg:px-8 sm:py-0 lg:py-4 overflow-x-hidden">
         <div className="flex items-center mb-8">

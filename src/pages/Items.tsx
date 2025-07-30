@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { LoginModal } from "@/components/LoginModal";
 import { useBooking } from "@/context/BookingContext";
 import { useItemContext } from "@/context/ItemContext";
-
+import { useRef, useEffect } from "react";
+import { ProfileDropdown } from "@/components/ProfileDropdown";
 
 import {
   ArrowLeft,
@@ -15,7 +16,7 @@ import {
   Plus,
   Minus,
   Search,
-  ArrowRightLeft,
+  ArrowRightLeft, 
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
@@ -25,9 +26,34 @@ const Items = () => {
   const { selectedItems, setSelectedItems } = useItemContext();
   const navigate = useNavigate();
   const [hasSearched, setHasSearched] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
+
   const [selectedCategory, setSelectedCategory] = useState("furniture");
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const savedMobile = localStorage.getItem("mobileNumber");
+    if (savedMobile) {
+      setIsLoggedIn(true);
+      setMobileNumber(savedMobile);
+    }
+  }, []);
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("mobileNumber");
+    setIsLoggedIn(false);
+    setMobileNumber("");
+  };
+
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState("");
+
+  const handleLoginSuccess = (mobile: string) => {
+    setMobileNumber(mobile);
+    setIsLoggedIn(true);
+    setIsLoginOpen(false);
+  };
 
   const categories = [
     { id: "furniture", name: "Furniture", icon: "🪑" },
@@ -206,6 +232,7 @@ const Items = () => {
         <LoginModal
           isOpen={isLoginOpen}
           onClose={() => setIsLoginOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
         />
       </div>
     );
@@ -215,46 +242,54 @@ const Items = () => {
       {/* Header */}
       {/* <header className=" bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 "> */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Left section (logo + back button) */}
-            <div className="flex items-center flex-1">
-              <div className="lg:hidden">
+      <header className="bg-white shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
+        <div className="flex justify-between items-center h-16">
+          {/* Left Side: Logo */}
+          <div>
+            <button
+              className="text-[30px] font-bold text-primary font-weight-900"
+              style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+              onClick={() => navigate("/")}
+            >
+              <h1>Shiftyng</h1>
+            </button>
+          </div>
+
+          {/* Right Side: Nav + Login/Profile */}
+          <div className="md:flex items-center space-x-8">
+            <a
+              href="#offers"
+              className="hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
+            >
+              Offers
+            </a>
+            <a
+              href="#help"
+              className="hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
+            >
+              Need Help ?
+            </a>
+
+            <div className="flex justify-end flex-1">
+              {isLoggedIn ? (
+                <ProfileDropdown
+                  mobile={mobileNumber}
+                  onLogout={handleLogout}
+                />
+              ) : (
                 <Button
                   variant="outline"
-                  size="icon"
-                  onClick={() => navigate("/")}
-                  className="mr-3"
+                  onClick={() => setIsLoginOpen(true)}
+                  className="border-primary text-primary hover:bg-primary hover:text-white"
                 >
-                  <ArrowLeft className="h-5 w-5" />
+                  Login
                 </Button>
-              </div>
-              <div>
-                <button
-                  className="text-[30px] font-bold text-primary font-weight-900"
-                  style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
-                  onClick={() => navigate("/")}
-                >
-                  <h1>Shiftyng</h1>
-                </button>
-              </div>
-            </div>
-
-            {/* Right section (Login) */}
-            <div className="flex justify-end flex-1">
-              <Button
-                variant="outline"
-                onClick={() => setIsLoginOpen(true)}
-                className="border-primary text-primary hover:bg-primary hover:text-white"
-              >
-                Login
-              </Button>
+              )}
             </div>
           </div>
         </div>
       </header>
-      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLoginSuccess={handleLoginSuccess} />
       {/* Booking Details Bar */}
       <div className="bg-white  shadow-sm">
         <div className="w-full  mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -372,8 +407,8 @@ const Items = () => {
                   {/* Icon inside a larger circle */}
                   <div
                     className={`w-14 h-14 rounded-full flex items-center justify-center shadow-md transition-all ${isSelected
-                        ? "bg-white text-[#BA1C1C]"
-                        : "bg-white/80 text-[#BA1C1C]"
+                      ? "bg-white text-[#BA1C1C]"
+                      : "bg-white/80 text-[#BA1C1C]"
                       }`}
                   >
                     <span className="text-3xl">{category.icon}</span>

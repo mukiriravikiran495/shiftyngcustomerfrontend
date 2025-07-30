@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import { LoginModal } from "@/components/LoginModal";
+import {LoginModal} from "@/components/LoginModal";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBooking } from "@/context/BookingContext";
 import { useItemContext } from "@/context/ItemContext";
@@ -53,6 +53,13 @@ const BookingSuccess = () => {
 
   const handleNewBooking = () => {
     navigate('/');
+  };
+
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const handleLoginSuccess = (mobile: string) => {
+    setMobileNumber(mobile);
+    setIsLoginOpen(false);
   };
 
   const {

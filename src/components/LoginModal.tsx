@@ -15,9 +15,10 @@ import { toast } from "@/hooks/use-toast";
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onLoginSuccess: (mobileNumber: string) => void;
 }
 
-export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
+export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps) => {
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -34,7 +35,6 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     }
 
     setLoading(true);
-    // Simulate OTP sending
     setTimeout(() => {
       setLoading(false);
       setStep("otp");
@@ -46,30 +46,33 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   };
 
   const handleVerifyOTP = async () => {
-    if (!otp || otp.length !== 6) {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter a valid 6-digit OTP",
-        variant: "destructive",
-      });
-      return;
-    }
+  if (!otp || otp.length !== 6) {
+    toast({
+      title: "Invalid OTP",
+      description: "Please enter a valid 6-digit OTP",
+      variant: "destructive",
+    });
+    return;
+  }
 
-    setLoading(true);
-    // Simulate OTP verification
-    setTimeout(() => {
-      setLoading(false);
-      toast({
-        title: "Login Successful!",
-        description: "Welcome to Shiftyng",
-      });
-      onClose();
-      // Reset form
-      setStep("phone");
-      setPhoneNumber("");
-      setOtp("");
-    }, 2000);
-  };
+  setLoading(true);
+  setTimeout(() => {
+    setLoading(false);
+
+    // Save to localStorage ✅
+    localStorage.setItem("mobileNumber", phoneNumber);
+
+    toast({
+      title: "Login Successful!",
+      description: "Welcome to Shiftyng",
+    });
+
+    onLoginSuccess(phoneNumber);
+    onClose();
+    resetForm();
+  }, 2000);
+};
+
 
   const resetForm = () => {
     setStep("phone");
@@ -80,7 +83,6 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md w-full p-0">
-        {/* Scrollable wrapper */}
         <div className="max-h-[90vh] overflow-y-auto px-8 py-6 sm:px-6">
           <DialogHeader>
             <DialogTitle className="text-center text-xl sm:text-2xl font-bold text-gray-800">
@@ -108,9 +110,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                       </Label>
                       <div className="flex mt-1">
                         <div className="flex items-center px-3 bg-gray-50 border border-r-0 rounded-l-md">
-                          <span className="text-gray-500 text-sm sm:text-base">
-                            +91
-                          </span>
+                          <span className="text-gray-500 text-sm sm:text-base">+91</span>
                         </div>
                         <Input
                           id="phone"
@@ -118,9 +118,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                           placeholder="Enter 10-digit number"
                           value={phoneNumber}
                           onChange={(e) =>
-                            setPhoneNumber(
-                              e.target.value.replace(/\D/g, "").slice(0, 10)
-                            )
+                            setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))
                           }
                           className="rounded-s-none border-none text-sm sm:text-base"
                           maxLength={10}
@@ -192,8 +190,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
               )}
 
               <div className="text-center text-xs sm:text-sm text-gray-500 mt-6">
-                By continuing, you agree to our Terms of Service and Privacy
-                Policy
+                By continuing, you agree to our Terms of Service and Privacy Policy
               </div>
             </CardContent>
           </Card>
@@ -202,3 +199,5 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     </Dialog>
   );
 };
+
+export default LoginModal;
