@@ -10,7 +10,9 @@ import { useVendorContext } from "@/context/VendorContext";
 import type { Vendor } from "@/context/VendorContext";
 import { useRef, useEffect } from "react";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
-
+import LocationInputInItems from "@/components/LocationInputInItems";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   ArrowLeft,
   Search,
@@ -32,8 +34,8 @@ const Vendors = () => {
   const { booking } = useBooking();
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [sortOption, setSortOption] = useState("Relevance");
-
   const [selectedFilters, setSelectedFilters] = useState({
     rating: [0],
     price: [0, 50000],
@@ -282,102 +284,76 @@ const Vendors = () => {
       </header>
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLoginSuccess={handleLoginSuccess} />
       {/* Booking Details Bar */}
-      <div className="bg-white  shadow-sm">
-        <div className="w-full  mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="bg-white rounded-2xl border -mb-1 shadow-sm p-4 sm:p-6 lg:p-8 w-full">
-            <div className="w-full">
-              {/* Mobile Layout */}
-              <div className="md:hidden h-18 -mt-2 flex items-start gap-2 text-sm ">
-                {/* Left Column: Back Button */}
-                <div className="hidden lg:block">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => navigate("/Items")}
-                  >
-                    <ArrowLeft className="h-5 w-5" />
-                  </Button>
-                </div>
-
-                {/* Right Column: All Details stacked vertically */}
-                <div className="md:hidden px-2 h-16 space-y-2 text-sm bg-white">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span className="truncate">{booking.pickupLocation}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <div className="w-2 h-2 bg-red-500 rounded-full" />
-                    <span className="truncate">{booking.dropLocation}</span>
-                  </div>
-
-                  {/* Single Row for Shift Date and Shift Type */}
-                  <div className="flex justify-between gap-4 text-gray-600 text-xs px-4">
-                    <span>
-                      <span className="font-medium">Shift Date:</span> {booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}
-                    </span>
-                    <span>
-                      <span className="font-medium">Shift Type:</span> {booking.shiftType}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Desktop Layout */}
-              <div className="hidden md:grid h-8 border-sm grid-cols-[auto_2fr_2fr_minmax(120px,1fr)_minmax(120px,0.8fr)_auto] items-center gap-2 text-sm">
-                {/* Back Button */}
-                <div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => navigate("/Items")}
-                    className="mr-2"
-                  >
-                    <ArrowLeft className="h-5 w-5" />
-                  </Button>
-                </div>
-
-                {/* From Location */}
-                <div className="flex items-center px-2 space-x-1 truncate">
-                  <MapPin className="w-5 h-5 text-green-600 mr-3" />
-                  {/* <span className="font-medium text-gray-600">From:</span> */}
-                  <span className="ml-1 truncate">{booking.pickupLocation}</span>
-                </div>
-
-                {/* To Location */}
-                <div className="flex items-center px-2 space-x-1 truncate">
-                  {/* <ArrowRightLeft className="h-4 w-4 text-gray-400" /> */}
-                  <MapPin className="w-5 h-5 text-red-600 mr-3" />
-                  {/* <span className="font-medium text-gray-600">To:</span> */}
-                  <span className=" ml-1 truncate">{booking.dropLocation}</span>
-                </div>
-
-                {/* Date */}
-                <div className="flex items-center whitespace-nowrap">
-                  {/* <Calendar className="h-4 w-4 text-gray-400 mr-1" /> */}
-                  <span className="font-medium text-gray-600 mr-2">
-                    Shift Date:
-                  </span>
-                  <span className=" ml-1">{booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}</span>
-                </div>
-
-                {/* Type */}
-                <div className="flex items-center whitespace-nowrap">
-                  <span className="font-medium text-gray-600 mr-2">
-                    Shift Type:
-                  </span>
-                  <span className=" ml-1">{booking.shiftType}</span>
-                </div>
-
-                {/* Modify Button */}
-                <div>
-                  <Button variant="outline" size="sm">
-                    <Search className="h-4 w-4 mr-1" />
-                    Modify
-                  </Button>
-                </div>
-              </div>
-            </div>
+      <div className="w-full bg-white shadow-md">
+        <div className="flex items-center gap-3 px-6 py-4 ml-24 mr-24 ">
+          <div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => navigate("/items")}
+              className="mr-2"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
           </div>
+          {/* From */}
+          <LocationInputInItems
+            label="FROM"
+            placeholder="Enter Pickup Location"
+            onSelect={(address, lat, lng) => {
+              console.log("FROM Selected:", { address, lat, lng });
+            }}
+          />
+
+          {/* Swap Icon */}
+          <div className="text-gray-400">
+            ⇆
+          </div>
+
+          {/* To */}
+          <LocationInputInItems
+            label="TO"
+            placeholder="Enter Drop Location"
+            onSelect={(address, lat, lng) => {
+              console.log("TO Selected:", { address, lat, lng });
+            }}
+          />
+
+          {/* Depart */}
+          <div className=" flex flex-col bg-gray-100 px-4 py-2 flex-1 rounded-lg h-[50px]">
+            <span className="text-xs text-gray-500">SHIFT DATE</span>
+
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date: Date | null) => setSelectedDate(date)}
+              dateFormat="EEE, dd MMM yyyy"
+              className="font-semibold text-gray-900 bg-transparent outline-none cursor-pointer text-xs"
+            />
+          </div>
+
+          <div className="flex flex-col bg-gray-100 px-4 py-2 flex-1 rounded-lg h-[50px]">
+            <span className="text-xs text-gray-500">SHIFT TYPE</span>
+            <select
+              className="flex-1 outline-none bg-transparent text-gray-900 text-xs border-0"
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Select shift type
+              </option>
+              <option value="home">ONE BHK</option>
+              <option value="home">TWO BHK</option>
+              <option value="home">THREE BHK</option>
+              <option value="home">4+ BHK</option>
+              <option value="office">Office Shifting</option>
+              <option value="vehicle">Vehicle Transport</option>
+              <option value="storage">Storage</option>
+            </select>
+          </div>
+
+          {/* Search Button */}
+          <button className="h-[50px] rounded-lg bg-gradient-to-r from-[#BA1C1C] to-[#BA1C1C] text-white font-semibold px-8 py-3 hover:from-[#BA1C1C] hover:to-[#BA1C1C] transition">
+            SEARCH
+          </button>
         </div>
       </div>
 
@@ -408,8 +384,8 @@ const Vendors = () => {
       <div className="w-full mx-auto px-4 bg-white sm:px-6 lg:px-8 sm:py-0 lg:py-4 overflow-x-hidden">
         <div className="flex gap-6 ">
           {/* Desktop Filters Sidebar */}
-          <div className="hidden lg:block w-80">
-            <div className="bg-white rounded-lg shadow-sm border p-6 sticky ">
+          <div className="hidden lg:block w-80 ml-24">
+            <div className="bg-white rounded-lg border p-6 sticky ">
               <div className="flex items-center mb-6">
                 <Filter className="h-5 w-5 text-gray-600 mr-2" />
                 <h3 className="font-semibold text-lg">Filters</h3>
@@ -515,7 +491,7 @@ const Vendors = () => {
           </div>
 
           {/* Vendors List */}
-          <div className="flex-1 w-full ">
+          <div className="flex-1 w-full mr-24">
             <div className="lg:mb-4">
               <div className="hidden lg:block flex flex-col sm:flex-row sm:items-center justify-between gap-3 ">
                 <select className="border rounded-md px-3 py-2 text-sm bg-white w-full sm:w-auto">
@@ -528,11 +504,11 @@ const Vendors = () => {
               </div>
             </div>
 
-            <div className="space-y-3 sm:w-full lg:w-full border-1 shadow-lg ">
+            <div className="space-y-3 sm:w-full lg:w-full border-1  ">
               {filteredVendors.map((vendor) => (
                 <Card
                   key={vendor.id}
-                  className=" hover:shadow-md transition-shadow cursor-pointer md:rounded-lg md:border md:shadow-sm overflow-hidden w-full"
+                  className=" transition-shadow cursor-pointer md:rounded-lg md:border md:shadow-sm overflow-hidden w-full"
                 >
                   <CardContent className="p-4 mt-0">
                     {/* Mobile Layout - Stack vertically */}
@@ -579,7 +555,7 @@ const Vendors = () => {
                           <div className="mb-3 flex items-center justify-between">
                             {/* Right: Original Price + Discount Badge */}
                             <div className="flex items-center gap-2">
-                              <Badge variant="destructive" className="text-xs">
+                              <Badge variant="destructive" className="text-xs" color="green">
                                 {vendor.discount}% OFF
                               </Badge>
                               <span className="text-sm text-gray-500 line-through">
@@ -694,7 +670,7 @@ const Vendors = () => {
                                 {vendor.discount}% OFF
                               </Badge>
                             </div>
-                            <div className="text-2xl font-bold text-primary">
+                            <div className="text-2xl font-bold text-primary ">
                               ₹{vendor.price.toLocaleString()}
                             </div>
                             <div className="text-sm text-gray-600">

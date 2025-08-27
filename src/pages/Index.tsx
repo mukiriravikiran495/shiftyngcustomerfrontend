@@ -9,6 +9,8 @@ import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import ChatWidget from "@/components/ChatWidget";
+import axios from "axios";
+
 
 import {
   Select,
@@ -38,16 +40,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
-
-const testLocations = [
-  "Bangalore, Karnataka",
-  "Hyderabad, Telangana",
-  "Chennai, Tamil Nadu",
-  "Mumbai, Maharashtra",
-  "Delhi",
-  "Pune, Maharashtra",
-  "Kolkata, West Bengal",
-];
+import React, { createContext, useContext } from "react";
 
 import { useRef, useEffect } from "react";
 
@@ -94,6 +87,7 @@ const GooglePlacesAutocomplete = ({
   );
 };
 
+const BookingContext = createContext(null);
 
 const Index = () => {
   const navigate = useNavigate();
@@ -105,6 +99,9 @@ const Index = () => {
   const [currentOfferSlide, setCurrentOfferSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+
+
 
   useEffect(() => {
     const savedMobile = localStorage.getItem("mobileNumber");
@@ -213,7 +210,7 @@ const Index = () => {
     setCurrentOfferSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (
       !booking.pickupLocation ||
       !booking.dropLocation ||
@@ -224,7 +221,28 @@ const Index = () => {
       return;
     }
 
-    navigate("/items");
+    const requestBody = {
+      // pickupAddress: booking.pickupLocation.label,
+      // dropAddress: booking.dropLocation.label,
+      shiftDate: booking.shiftDate,
+      shiftType: booking.shiftType,
+    };
+
+    try {
+      // const response = await axios.post(
+      //   "http://localhost:8080/api/booking/initiate",
+      //   requestBody
+      // );
+
+      // ✅ Save response (e.g. list of items)
+      // setBookingResponse(response.data);
+
+      // ✅ Navigate to items page
+      navigate("/items");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to initiate booking. Please try again.");
+    }
   };
   const swapLocations = () => {
     setBooking((prev) => ({
@@ -248,9 +266,9 @@ const Index = () => {
 
   return (
     <LoadScript googleMapsApiKey={googleMapsApiKey} libraries={["places"]}>
-      <div className="w-full bg-background">
+      <div className="w-full bg-[#F2F2F2]">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
+        <header className="bg-white shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16 sticky top-0 z-50">
           <div className="flex justify-between items-center h-16">
             {/* Left Side: Logo */}
             <div>
@@ -267,13 +285,19 @@ const Index = () => {
             <div className="md:flex items-center space-x-8">
               <a
                 href="#offers"
-                className="hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
+                className="text-[18px] hidden lg:block text-[#000000] hover:text-primary transition-colors fontFamily-Arial"
+              >
+                Become Partner
+              </a>
+              <a
+                href="#offers"
+                className="text-[18px] hidden lg:block text-[#000000] hover:text-primary transition-colors fontFamily-Arial "
               >
                 Offers
               </a>
               <a
                 href="#help"
-                className="hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
+                className="text-[18px] hidden lg:block text-[#000000] hover:text-primary transition-colors fontFamily-Arial"
               >
                 Need Help ?
               </a>
@@ -288,7 +312,7 @@ const Index = () => {
                   <Button
                     variant="outline"
                     onClick={() => setIsLoginOpen(true)}
-                    className="border-primary text-primary hover:bg-primary hover:text-white"
+                    className="text-[18px] border-black text-black hover:bg-primary hover:text-white fontFamily-Arial"
                   >
                     Login
                   </Button>
@@ -304,391 +328,64 @@ const Index = () => {
         <SidebarProvider>
           {/* <AppSidebar /> */}
           <section
-            className="hero-bg h-80 bg-[#F3F3F3] w-full py-20"
+            className=" relative  h-[600px] bg-[#F2F2F2] w-full bg-contain bg-no-repeat bg-center mb-8"
             style={{
-              // backgroundImage: "url('/icons/hero.jpg')",
-              backgroundSize: "cover",
+              backgroundImage: "url('/icons/hero.png')",
+              backgroundSize: "auto",
               backgroundPosition: "center",
-              backgroundBlendMode: "overlay",
-            }}>
-            <div className="w-full mx-auto sm:px-6 lg:px-4 ">
-              <div className=" text-center mb-10">
-                <h2 className=" text-4xl md:text-5xl font-bold text-[#BA1C1C] lg:text-[#000000] mb-4">
+            }}
+          >
+            <div className="w-full mx-auto sm:px-6 lg:px-4 h-full flex flex-col justify-center items-center">
+              {/* Heading + Subtitle */}
+              <div className="text-center pt-20">
+                <h2 className="text-4xl md:text-5xl font-bold text-[#BA1C1C] lg:text-[#000000] mb-4">
                   Moving Made Simple
                 </h2>
-                <p className=" text-xl text-[#000000] lg:text-[#000000]">
-                  Find trusted packers and movers for your next move
+                <p className="text-xl text-[#000000]">
+                  Find the truck or trusted Packers and Movers for your next move
                 </p>
               </div>
 
+              {/* Chat widget (still inside hero) */}
               <ChatWidget />
 
-              {/* Booking Form */}
+              {/* Cards fixed at bottom of hero */}
+              <div className="grid grid-cols-2 gap-6 mt-8">
+                <button
+                  onClick={() => navigate("/bookingform")}
+                  className="rounded-2xl overflow-hidden shadow-md hover:scale-105 transition border-[#8B8888] border-2"
+                >
+                  <img src="/icons/packers.png" alt="Packers" className="w-80 h-40 object-cover" />
+                </button>
 
-              <div className="w-full max-w-screen-2xl mx-auto px-4 py-4 ">
-                {/* Main Form Container */}
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden ">
-                  {/* Mobile Layout */}
-                  <div className="block md:hidden">
-                    {/* Location Inputs */}
-                    <div className="relative">
-                      {/* Pickup Location */}
-                      <div className="flex items-center px-6 py-4 border-b border-gray-200">
-                        <MapPin className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" />
-                        <div className="flex-1">
-                          <label className="text-xs text-gray-500 block mb-1">
-                            From
-                          </label>
-                          {/* <input
-                        placeholder="Pick up Location"
-                        value={bookingForm.pickupLocation}
-                        onChange={(e) => setBookingForm({...bookingForm, pickupLocation: e.target.value})}
-                        className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
-                      /> */}
-                          <GooglePlacesAutocomplete
-                            value={booking.pickupLocation}
-                            onChange={(value) =>
-                              setBooking((prev) => ({
-                                ...prev,
-                                pickupLocation: value,
-                              }))
-                            }
-                            placeholder="Pick up Location"
-                          />
-                        </div>
-                      </div>
+                <button
+                  onClick={() => navigate("/truckbookingform")}
+                  className="rounded-2xl overflow-hidden shadow-md hover:scale-105 transition border-[#8B8888] border-2"
+                >
+                  <img src="/icons/truck.png" alt="Truck" className="w-80 h-40 object-cover" />
+                </button>
 
-                      {/* Swap Button */}
-                      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10">
-                        <button
-                          onClick={swapLocations}
-                          className="bg-gray-100 rounded-full p-2 shadow-md hover:bg-gray-200 transition-colors"
-                        >
-                          <ArrowUpDown className="w-4 h-4 text-gray-600" />
-                        </button>
-                      </div>
+                <button
+                  onClick={() => navigate("/truckbookingform")}
+                  className="rounded-2xl overflow-hidden shadow-md hover:scale-105 transition border-[#8B8888] border-2"
+                >
+                  <img src="/icons/bike.png" alt="Bike" className="w-80 h-40 object-cover" />
+                </button>
 
-                      {/* Drop Location */}
-                      <div className="flex items-center px-6 py-4 border-b border-gray-200">
-                        <MapPin className="w-5 h-5 text-red-600 mr-3 flex-shrink-0" />
-                        <div className="flex-1">
-                          <label className="text-xs text-gray-500 block mb-1">
-                            To
-                          </label>
-                          {/* <input
-                        placeholder="Drop Location"
-                        value={dropLocation}
-                        onChange={(e) => setDropLocation(e.target.value)}
-                        className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 text-base font-medium"
-                      /> */}
-                          <GooglePlacesAutocomplete
-                            value={booking.dropLocation}
-                            onChange={(value) =>
-                              setBooking((prev) => ({
-                                ...prev,
-                                dropLocation: value,
-                              }))
-                            }
-                            placeholder="Drop Location"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Date and Type Row */}
-                    <div className="flex border-b border-gray-500 ">
-                      {/* Date Picker */}
-                      <div className="flex items-center px-6 py-6 lg:py-4">
-                        <div className="flex-1">
-                          <label className="text-xs text-gray-500 block mb-1">
-                            Date of Journey
-                          </label>
-                          <Popover open={openMobile} onOpenChange={setOpenMobile} >
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                className={cn(
-                                  "w-full justify-start p-0 h-auto font-normal hover:bg-transparent",
-                                  !booking.shiftDate && "text-gray-400"
-                                )}
-                              >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                <span>
-                                  {booking.shiftDate instanceof Date && !isNaN(booking.shiftDate.getTime())
-                                    ? format(booking.shiftDate, "dd MMM, yyyy")
-                                    : "Select Date"}
-                                </span>
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={booking.shiftDate ?? undefined}
-                                onSelect={(date) => {
-                                  if (date) {
-                                    setBooking((prev) => ({
-                                      ...prev,
-                                      shiftDate: date, // store as Date object
-                                    }));
-                                    setOpenMobile(false);
-                                  }
-                                }}
-                                disabled={(date) => date < new Date()}
-                                initialFocus
-                                className="pointer-events-auto"
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                      </div>
-
-                      {/* Shift Type */}
-                      <div className="flex-1 px-6 py-4">
-                        <label className="text-xs text-gray-500 block mb-2">
-                          Shift Type
-                        </label>
-                        <Select
-                          value={booking.shiftType}
-                          onValueChange={(value) =>
-                            setBooking((prev) => ({ ...prev, shiftType: value }))
-                          }
-                        >
-                          <SelectTrigger className="w-full p-0 border-none focus:ring-0 text-left bg-transparent h-auto shadow-none">
-                            <SelectValue
-                              placeholder="Select Type"
-                              className="text-base"
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="1 BHK">One BHK</SelectItem>
-                            <SelectItem value="2 BHK">Two BHK</SelectItem>
-                            <SelectItem value="3 BHK">Three BHK</SelectItem>
-                            <SelectItem value="duplex">Duplex</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Desktop/Tablet Layout */}
-                  <div className="hidden md:block">
-                    <div className="grid grid-cols-1 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
-                      {/* Pickup Location */}
-                      <div className="flex items-center px-6 py-6 lg:py-4">
-                        <MapPin className="w-5 h-5 text-green-600 mr-3" />
-                        <div className="flex-1">
-                          <label className="text-xs text-gray-500 block mb-1">
-                            From
-                          </label>
-                          {/* <StaticAutocomplete
-                        value={booking.pickupLocation}
-                        onChange={(value) =>
-                          setBooking((prev) => ({
-                            ...prev,
-                            pickupLocation: value,
-                          }))
-                        }
-                        placeholder="Pick up Location"
-                      /> */}
-
-                          <GooglePlacesAutocomplete
-                            value={booking.pickupLocation}
-                            onChange={(value) =>
-                              setBooking((prev) => ({
-                                ...prev,
-                                pickupLocation: value,
-                              }))
-                            }
-                            placeholder="Pick up Location"
-                          />
-
-                        </div>
-                      </div>
-
-                      {/* Drop Location */}
-                      {/* Drop Location */}
-                      <div className="flex items-center px-6 py-6 lg:py-4">
-                        <MapPin className="w-5 h-5 text-red-600 mr-3" />
-                        <div className="flex-1">
-                          <label className="text-xs text-gray-500 block mb-1">
-                            To
-                          </label>
-                          <GooglePlacesAutocomplete
-                            value={booking.dropLocation}
-                            onChange={(value) =>
-                              setBooking((prev) => ({
-                                ...prev,
-                                dropLocation: value,
-                              }))
-                            }
-                            placeholder="Drop Location"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Date Picker */}
-                      <div className="flex items-center px-6 py-6 lg:py-4">
-                        <div className="flex-1">
-                          <label className="text-xs text-gray-500 block mb-1">
-                            Date of Journey
-                          </label>
-                          <Popover open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                className={cn(
-                                  "w-full justify-start p-0 h-auto font-normal hover:bg-transparent",
-                                  !booking.shiftDate && "text-gray-400"
-                                )}
-                              >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                <span>
-                                  {booking.shiftDate instanceof Date && !isNaN(booking.shiftDate.getTime())
-                                    ? format(booking.shiftDate, "dd MMM, yyyy")
-                                    : "Select Date"}
-                                </span>
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={booking.shiftDate ?? undefined}
-                                onSelect={(date) => {
-                                  if (date) {
-                                    setBooking((prev) => ({
-                                      ...prev,
-                                      shiftDate: date, // store as Date object
-                                    }));
-                                    setOpen(false);
-                                  }
-                                }}
-                                disabled={(date) => date < new Date()}
-                                initialFocus
-                                className="pointer-events-auto"
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                      </div>
-
-
-                      {/* Shift Type */}
-                      <div className="flex items-center px-6 py-6 lg:py-4">
-                        <div className="flex-1">
-                          <label className="text-xs text-gray-500 block mb-1">
-                            Shift Type
-                          </label>
-                          <Select
-                            value={booking.shiftType}
-                            onValueChange={(value) =>
-                              setBooking((prev) => ({ ...prev, shiftType: value }))
-                            }
-                          >
-                            <SelectTrigger className="w-full p-0 border-none focus:ring-0 text-left bg-transparent h-auto shadow-none">
-                              <SelectValue placeholder="Select Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="1 BHK">One BHK</SelectItem>
-                              <SelectItem value="2 BHK">Two BHK</SelectItem>
-                              <SelectItem value="3 BHK">Three BHK</SelectItem>
-                              <SelectItem value="Office">Office</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Search Button */}
-                  <div className="flex justify-center p-6 pt-4 ">
-                    <Button
-                      onClick={handleSearch}
-                      disabled={isLoading}
-                      className="w-full sm:w-80 md:w-96 lg:w-[400px] h-12 md:h-14 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold text-base md:text-lg flex items-center justify-center gap-3 shadow-lg transition-all duration-200"
-                    >
-                      {/* <Search className="w-5 h-5" /> */}
-                      {isLoading ? "Searching..." : "Search"}
-                    </Button>
-                  </div>
-                </div>
+                <button
+                  onClick={() => navigate("/bookingform")}
+                  className="rounded-2xl overflow-hidden shadow-md hover:scale-105 transition border-[#8B8888] border-2"
+                >
+                  <img src="/icons/parcel.png" alt="Parcel" className="w-80 h-40 object-cover" />
+                </button>
               </div>
             </div>
           </section>
+
         </SidebarProvider>
 
         {/* Offers Section */}
-        <section id="offers" className=" bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Special Offers
-            </h3>
-
-            <div className="relative">
-              <div className="overflow-hidden">
-                <div
-                  className="flex transition-transform duration-300 ease-in-out"
-                  style={{
-                    transform: `translateX(-${currentOfferSlide * 100}%)`,
-                  }}
-                >
-                  {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-                    <div key={slideIndex} className="w-full flex-shrink-0">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {offers
-                          .slice(slideIndex * 4, (slideIndex + 1) * 4)
-                          .map((offer) => (
-                            <div
-                              key={offer.id}
-                              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                            >
-                              <img
-                                src={offer.image}
-                                alt={offer.title}
-                                className="w-full h-48 object-cover"
-                              />
-                              <div className="p-4">
-                                <h4 className="font-semibold text-gray-900">
-                                  {offer.title}
-                                </h4>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Navigation Buttons */}
-              <button
-                onClick={prevSlide}
-                className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
-              >
-                <ChevronLeft className="h-6 w-6 text-gray-600" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
-              >
-                <ChevronRight className="h-6 w-6 text-gray-600" />
-              </button>
-
-              {/* Dots Pagination */}
-              <div className="flex justify-center mt-6 space-x-2">
-                {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentOfferSlide(index)}
-                    className={cn(
-                      "w-2 h-2 rounded-full transition-colors",
-                      currentOfferSlide === index ? "bg-primary" : "bg-gray-300"
-                    )}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        
 
         {/* Why Shiftyng Section */}
         <section className="py-16 bg-white">

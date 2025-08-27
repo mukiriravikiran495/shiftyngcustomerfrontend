@@ -3,11 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { LoginModal } from "@/components/LoginModal";
-import { useBooking } from "@/context/BookingContext";
 import { useItemContext } from "@/context/ItemContext";
 import { useRef, useEffect } from "react";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
-
+import LocationInputInItems from "@/components/LocationInputInItems";
 import {
   ArrowLeft,
   MapPin,
@@ -16,19 +15,25 @@ import {
   Plus,
   Minus,
   Search,
-  ArrowRightLeft, 
+  ArrowRightLeft,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import type { RootState } from "@/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setBooking } from "@/store/bookingSlice";
+
 
 const Items = () => {
   const location = useLocation();
-  const { booking } = useBooking();
+  const booking = useSelector((state: RootState) => state.booking);
   const { selectedItems, setSelectedItems } = useItemContext();
   const navigate = useNavigate();
   const [hasSearched, setHasSearched] = useState(false);
-
+  const dispatch = useDispatch();
   const [selectedCategory, setSelectedCategory] = useState("furniture");
-
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -242,7 +247,7 @@ const Items = () => {
       {/* Header */}
       {/* <header className=" bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 "> */}
-      <header className="bg-white shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16">
+      <header className="bg-white shadow-sm border-b pl-4 pr-6 lg:pl-16 lg:pr-16 sticky top-0 z-50">
         <div className="flex justify-between items-center h-16">
           {/* Left Side: Logo */}
           <div>
@@ -259,13 +264,19 @@ const Items = () => {
           <div className="md:flex items-center space-x-8">
             <a
               href="#offers"
-              className="hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
+              className="text-[18px] hidden lg:block text-[#000000] hover:text-primary transition-colors fontFamily-Arial"
+            >
+              Become Partner
+            </a>
+            <a
+              href="#offers"
+              className="text-[18px] hidden lg:block text-[#000000] hover:text-primary transition-colors fontFamily-Arial "
             >
               Offers
             </a>
             <a
               href="#help"
-              className="hidden lg:block text-[#BA1C1C] hover:text-primary transition-colors"
+              className="text-[18px] hidden lg:block text-[#000000] hover:text-primary transition-colors fontFamily-Arial"
             >
               Need Help ?
             </a>
@@ -280,7 +291,7 @@ const Items = () => {
                 <Button
                   variant="outline"
                   onClick={() => setIsLoginOpen(true)}
-                  className="border-primary text-primary hover:bg-primary hover:text-white"
+                  className="text-[18px] border-black text-black hover:bg-primary hover:text-white fontFamily-Arial"
                 >
                   Login
                 </Button>
@@ -291,223 +302,220 @@ const Items = () => {
       </header>
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLoginSuccess={handleLoginSuccess} />
       {/* Booking Details Bar */}
-      <div className="bg-white  shadow-sm">
-        <div className="w-full  mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="bg-white rounded-2xl border shadow-sm p-4 sm:p-6 lg:p-8 w-full">
-            <div className="w-full">
-              {/* Mobile Layout */}
-              <div className="md:hidden px-2 py-2 space-y-2 bg-white rounded-xl shadow-sm text-sm w-full ">
-                {/* Left Column: Back Button */}
-                <div className="hidden lg:block">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => navigate("/")}
-                  >
-                    <ArrowLeft className="h-5 w-5" />
-                  </Button>
-                </div>
-
-                {/* Right Column: All Details stacked vertically */}
-                <div className="md:hidden px-2 h-16 space-y-2 text-sm bg-white">
-                  <div className="flex items-center gap-2 text-gray-600 truncate">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span className="truncate">{booking.pickupLocation}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <div className="w-2 h-2 bg-red-500 rounded-full" />
-                    <span className="truncate">{booking.dropLocation}</span>
-                  </div>
-
-                  {/* Single Row for Shift Date and Shift Type */}
-                  <div className="flex justify-between gap-4 text-gray-600 text-xs px-4">
-                    <span>
-                      <span className="font-medium">Shift Date:</span> {booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}
-                    </span>
-                    <span>
-                      <span className="font-medium">Shift Type:</span> {booking.shiftType}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Desktop Layout */}
-              <div className="hidden md:grid h-8 border-r grid-cols-[auto_2fr_2fr_minmax(120px,1fr)_minmax(120px,0.8fr)_auto] items-center gap-2 text-sm">
-                {/* Back Button */}
-                <div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => navigate("/")}
-                    className="mr-2"
-                  >
-                    <ArrowLeft className="h-5 w-5" />
-                  </Button>
-                </div>
-
-                {/* From Location */}
-                <div className="flex items-center px-2 space-x-1 truncate">
-                  <MapPin className="w-5 h-5 text-green-600 mr-3" />
-                  {/* <span className="font-medium text-gray-600">From:</span> */}
-                  <span className="ml-1 truncate">{booking.pickupLocation}</span>
-                </div>
-
-                {/* To Location */}
-                <div className="flex items-center px-2 space-x-1 truncate">
-                  {/* <ArrowRightLeft className="h-4 w-4 text-gray-400" /> */}
-                  <MapPin className="w-5 h-5 text-red-600 mr-3" />
-                  {/* <span className="font-medium text-gray-600">To:</span> */}
-                  <span className=" ml-1 truncate">{booking.dropLocation}</span>
-                </div>
-
-                {/* Date */}
-                <div className="flex items-center whitespace-nowrap">
-                  {/* <Calendar className="h-4 w-4 text-gray-400 mr-1" /> */}
-                  <span className="font-medium text-gray-600 mr-2">
-                    Shift Date:
-                  </span>
-                  <span className=" ml-1 ">{booking.shiftDate ? new Date(booking.shiftDate).toLocaleDateString() : "N/A"}</span>
-                </div>
-
-                {/* Type */}
-                <div className="flex items-center whitespace-nowrap">
-                  <span className="font-medium text-gray-600 mr-2">
-                    Shift Type:
-                  </span>
-                  <span className=" ml-1">{booking.shiftType}</span>
-                </div>
-
-                {/* Modify Button */}
-                <div>
-                  <Button variant="outline" size="sm">
-                    <Search className="h-4 w-4 mr-1" />
-                    Modify
-                  </Button>
-                </div>
-              </div>
-            </div>
+      <div className="w-full bg-white mb-4">
+        <div className="flex items-center gap-3 px-6 py-4 ml-24 mr-24 ">
+          <div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => navigate("/bookingform")}
+              className="mr-2"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
           </div>
+          {/* From */}
+          <LocationInputInItems
+            label="FROM"
+            placeholder="Enter Pickup Location"
+            value={booking.pickupLocation || ""}
+            onSelect={(address, lat, lng) => {
+              console.log("FROM Selected:", address);
+            }}
+          />
+
+          {/* Swap Icon */}
+          <div className="text-gray-400">
+            ⇆
+          </div>
+
+          {/* To */}
+          <LocationInputInItems
+            label="TO"
+            placeholder="Enter Drop Location"
+            value={booking.dropLocation || ""}
+            onSelect={(address, lat, lng) => {
+              console.log("TO Selected:", address);
+            }}
+          />
+
+          {/* Depart */}
+          <div className=" flex flex-col bg-gray-100 px-4 py-2 flex-1 rounded-lg h-[50px]">
+            <span className="text-xs text-gray-500">SHIFT DATE</span>
+
+            <DatePicker
+              selected={booking.shiftDate ? new Date(booking.shiftDate) : null}
+              onChange={(date: Date | null) => console.log("Date changed:", date)}
+              dateFormat="EEE, dd MMM yyyy"
+              className="font-semibold text-gray-900 bg-transparent outline-none cursor-pointer text-xs"
+            />
+          </div>
+
+          <div className="flex flex-col bg-gray-100 px-4 py-2 flex-1 rounded-lg h-[50px]">
+            <span className="text-xs text-gray-500">SHIFT TYPE</span>
+            <select
+              className="flex-1 outline-none bg-transparent text-gray-900 text-xs border-0"
+              value={booking.shiftType || ""}
+              onChange={(e) => console.log("Shift type changed:", e.target.value)}
+            >
+              <option value="" disabled>
+                Select shift type
+              </option>
+              <option value="onebhk">ONE BHK</option>
+              <option value="twobhk">TWO BHK</option>
+              <option value="threebhk">THREE BHK</option>
+              <option value="fourplus">4+ BHK</option>
+              <option value="office">Office Shifting</option>
+              <option value="vehicle">Vehicle Transport</option>
+              <option value="storage">Storage</option>
+            </select>
+          </div>
+
+          {/* Search Button */}
+          <button className="h-[50px] rounded-lg bg-gradient-to-r from-[#BA1C1C] to-[#BA1C1C] text-white font-semibold px-8 py-3 shadow hover:from-[#BA1C1C] hover:to-[#BA1C1C] transition">
+            SEARCH
+          </button>
         </div>
       </div>
+
+
       {/* Category Bar */}
-      {/* <div className="flex  px-1  lg:px-8 "> */}
-      <div className="flex w-full  mx-auto px-1 sm:px-6 lg:px-6">
-        {/* Categories Sidebar */}
-        <div className="hidden lg:block w-24 sm:w-28 md:w-36 lg:w-48 xl:w-48 2xl:w-60  rounded-2xl shadow-sm h-full overflow-y-auto px-4 pt-4 bg-gradient-to-b from-gray to-white">
-          <div className="flex flex-col space-y-3 bg-gradient-to-b from-red to-white">
-            {categories.map((category) => {
-              const isSelected = selectedCategory === category.id;
-              return (
+      <div className="w-full">
+        <div className="flex mx-auto px-1 sm:px-6 lg:px-6 lg:ml-24 lg:mr-24 ">
+          {/* Categories Sidebar */}
+          <div className="hidden lg:block shadow-lg w-24 sm:w-28 md:w-36 lg:w-48 xl:w-48 2xl:w-60  shadow-sm h-full overflow-y-auto  pt-4 bg-gradient-to-b from-gray to-white">
+            <div className="flex flex-col  space-y-3 ">
+              {categories.map((category) => {
+                const isSelected = selectedCategory === category.id;
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => setSelectedCategory(category.id)}
+                    className={`flex items-center space-x-3 px-3 py-2  rounded-md transition-all duration-300 ${isSelected ? "bg-gradient-to-b from-white to-gray-200 text-[#BA1C1C]" : "text-primary hover:bg-white/10"
+                      }`}
+                  >
+                    {/* Icon inside a larger circle */}
+                    <div
+                      className={`w-14 h-14 rounded-full flex items-center justify-center shadow-md transition-all ${isSelected
+                        ? "bg-white text-[#BA1C1C]"
+                        : "bg-white/80 text-[#BA1C1C]"
+                        }`}
+                    >
+                      <span className="text-3xl">{category.icon}</span>
+                    </div>
+
+                    {/* Category name */}
+                    <span
+                      className={`text-sm font-semibold ${isSelected ? "text-[#BA1C1C]" : "text-primary"
+                        }`}
+                    >
+                      {category.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+
+          {/* {mobile category side bar} */}
+          <div className="lg:hidden w-24 sm:w-28 md:w-36 lg:w-60 xl:w-72 2xl:w-80 rounded-2xl bg-white shadow-sm h-full overflow-y-auto px-2 pt-2 md:pt-3">
+            <div className="space-y-4 md:space-y-1 rounded-2xl bg-gradient-to-b from-gray to-white text-primary">
+              {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`flex items-center space-x-3 px-3 py-2  rounded-xl transition-all duration-300 ${isSelected ? "bg-gradient-to-b from-red-100 to-white text-[#BA1C1C]" : "text-primary hover:bg-white/10"
-                    }`}
-                >
-                  {/* Icon inside a larger circle */}
-                  <div
-                    className={`w-14 h-14 rounded-full flex items-center justify-center shadow-md transition-all ${isSelected
-                      ? "bg-white text-[#BA1C1C]"
-                      : "bg-white/80 text-[#BA1C1C]"
-                      }`}
-                  >
-                    <span className="text-3xl">{category.icon}</span>
-                  </div>
-
-                  {/* Category name */}
-                  <span
-                    className={`text-sm font-semibold ${isSelected ? "text-[#BA1C1C]" : "text-primary"
-                      }`}
-                  >
-                    {category.name}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-
-        {/* {mobile category side bar} */}
-        <div className="lg:hidden w-24 sm:w-28 md:w-36 lg:w-60 xl:w-72 2xl:w-80 rounded-2xl bg-white shadow-sm h-full overflow-y-auto px-2 pt-2 md:pt-3">
-          <div className="space-y-4 md:space-y-1 rounded-2xl bg-gradient-to-b from-gray to-white text-primary">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`
+                  className={`
           flex items-center w-full rounded-2xl transition-colors duration-300
           ${selectedCategory === category.id
-                    ? "bg-gradient-to-b from-primary/20 to-white text-primary border "
-                    : "text-gray-700 hover:bg-gray-100"
-                  }
+                      ? "bg-gradient-to-b from-primary/20 to-white text-primary border "
+                      : "text-gray-700 hover:bg-gray-100"
+                    }
 
           flex-col justify-center p-2 text-center
           md:flex-row md:justify-start md:items-center  md:h-16 md:px-2 md:py-3 md:rounded-lg md:text-left
           `}
-              >
-                {/* Icon */}
-                <span className="text-2xl mb-1 md:mb-0 md:mr-2">
-                  {category.icon}
-                </span>
-
-                {/* Name */}
-                <span className="text-xs font-medium md:text-sm break-words">
-                  {category.name}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Items Grid */}
-        <div className="flex-1 overflow-y-auto h-full p-3 sm:p-4 scrollbar-hide ">
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 xl:grid-cols-7  gap-3 ">
-            {(items[selectedCategory as keyof typeof items] || []).map(
-              (item) => (
-                <div
-                  key={item.id}
-                  className="bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow min-w-0 overflow-hidden max-h-[220px] sm:max-h-none flex flex-col"
                 >
-                  <div className="aspect-square w-full overflow-hidden rounded-t-lg">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  {/* Icon */}
+                  <span className="text-2xl mb-1 md:mb-0 md:mr-2">
+                    {category.icon}
+                  </span>
 
-                  <div className="px-2 py-1 sm:px-3 sm:py-2 flex-1 flex flex-col justify-between">
-                    <h4 className="font-medium text-xs sm:text-sm text-gray-900 truncate mb-1 sm:mb-2">
-                      {item.name}
-                    </h4>
+                  {/* Name */}
+                  <span className="text-xs font-medium md:text-sm break-words">
+                    {category.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
 
-                    {selectedItems.find((selected) => selected.id === String(item.id)) ? (
-                      <div className="flex items-center justify-center gap-1 ">
-                        <button
-                          onClick={() =>
-                            updateItemCount(
-                              {
-                                id: String(item.id),
-                                name: item.name,
-                                image: item.image,
-                                category: selectedCategory,
-                              },
-                              false
-                            )
-                          }
-                          className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-primary flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </button>
+          {/* Items Grid */}
+          <div className="flex-1 overflow-y-auto h-full p-3 sm:p-4 scrollbar-hide ">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 xl:grid-cols-7  gap-3 ">
+              {(items[selectedCategory as keyof typeof items] || []).map(
+                (item) => (
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-lg border   transition-shadow min-w-0 overflow-hidden max-h-[220px] sm:max-h-none flex flex-col"
+                  >
+                    <div className="aspect-square hover:shadow-md w-full overflow-hidden rounded-t-lg">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
 
-                        <span className="font-semibold text-sm sm:text-lg px-2 sm:px-3">
-                          {
-                            selectedItems.find((selected) => selected.id === String(item.id))?.quantity ?? 0
-                          }
-                        </span>
+                    <div className="px-2 py-1 sm:px-3 sm:py-2 flex-1 flex flex-col justify-between">
+                      <h4 className="font-medium text-xs sm:text-sm text-gray-900 truncate mb-1 sm:mb-2">
+                        {item.name}
+                      </h4>
 
-                        <button
+                      {selectedItems.find((selected) => selected.id === String(item.id)) ? (
+                        <div className="flex items-center justify-center gap-1 ">
+                          <button
+                            onClick={() =>
+                              updateItemCount(
+                                {
+                                  id: String(item.id),
+                                  name: item.name,
+                                  image: item.image,
+                                  category: selectedCategory,
+                                },
+                                false
+                              )
+                            }
+                            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-primary flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </button>
+
+                          <span className="font-semibold text-sm sm:text-lg px-2 sm:px-3">
+                            {
+                              selectedItems.find((selected) => selected.id === String(item.id))?.quantity ?? 0
+                            }
+                          </span>
+
+                          <button
+                            onClick={() =>
+                              updateItemCount(
+                                {
+                                  id: String(item.id),
+                                  name: item.name,
+                                  image: item.image,
+                                  category: selectedCategory,
+                                },
+                                true
+                              )
+                            }
+                            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ) : (
+                        <Button
                           onClick={() =>
                             updateItemCount(
                               {
@@ -519,36 +527,19 @@ const Items = () => {
                               true
                             )
                           }
-                          className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors"
+                          variant="outline"
+                          size="sm"
+                          className="w-full border-primary text-primary text-xs sm:text-sm py-1 sm:py-2 hover:bg-primary hover:text-white"
                         >
-                          <Plus className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ) : (
-                      <Button
-                        onClick={() =>
-                          updateItemCount(
-                            {
-                              id: String(item.id),
-                              name: item.name,
-                              image: item.image,
-                              category: selectedCategory,
-                            },
-                            true
-                          )
-                        }
-                        variant="outline"
-                        size="sm"
-                        className="w-full border-primary text-primary text-xs sm:text-sm py-1 sm:py-2 hover:bg-primary hover:text-white"
-                      >
-                        ADD
-                      </Button>
-                    )}
-                  </div>
+                          ADD
+                        </Button>
+                      )}
+                    </div>
 
-                </div>
-              )
-            )}
+                  </div>
+                )
+              )}
+            </div>
           </div>
         </div>
       </div>

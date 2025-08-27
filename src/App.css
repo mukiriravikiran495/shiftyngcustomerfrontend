@@ -17,21 +17,34 @@
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
-.scrollbar-hidden {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
-}
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Edge */
-}
-hide-scrollbar::-webkit-scrollbar {
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-/* Hide scrollbar for IE, Edge, Firefox */
-.hide-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
 }
+/* Make scrollbar thin */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;   /* vertical scrollbar */
+  height: 6px;  /* horizontal scrollbar */
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent; /* or #f1f1f1 */
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1; /* scrollbar color */
+  border-radius: 10px;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;          /* Firefox */
+  scrollbar-color: #c1c1c1 transparent; /* Firefox */
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);

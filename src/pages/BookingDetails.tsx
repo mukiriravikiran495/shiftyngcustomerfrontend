@@ -120,11 +120,11 @@ const Confirmation = () => {
       return;
     }
 
-    const mobileNumber = localStorage.getItem("mobileNumber");
-    if (!mobileNumber) {
-      setIsLoginOpen(true); // <-- open login modal here
-      return;
-    }
+    // const mobileNumber = localStorage.getItem("mobileNumber");
+    // if (!mobileNumber) {
+    //   setIsLoginOpen(true); // <-- open login modal here
+    //   return;
+    // }
 
     setShowConfirmModal(true);
 
@@ -222,8 +222,8 @@ const Confirmation = () => {
       </header>
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLoginSuccess={handleLoginSuccess} />
 
-      <div className="w-full mx-auto px-4 bg-white sm:px-6 lg:px-8 sm:py-0 lg:py-4 overflow-x-hidden">
-        <div className="flex items-center mb-8">
+      <div className="w-full mx-auto px-4 bg-white sm:px-6 lg:px-8 sm:py-0 lg:py-4 overflow-x-hidden ">
+        <div className="flex items-center mb-8 ml-24">
           <div className="hidden lg:block">
             <Button
               variant="outline"
@@ -240,7 +240,7 @@ const Confirmation = () => {
 
 
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 ml-24 mr-24">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
 

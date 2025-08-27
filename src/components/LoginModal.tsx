@@ -18,11 +18,17 @@ interface LoginModalProps {
   onLoginSuccess: (mobileNumber: string) => void;
 }
 
+const SEND_OTP_URL = "http://localhost:8082/v1/api/customer/sendotp";
+const VERIFY_OTP_URL = "http://localhost:8082/v1/api/customer/verifyotp";
+
 export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps) => {
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [custInfo, setCustInfo] = useState<any>(null);
+  const [otpLength, setOtpLength] = useState(4);
+  const [message, setMessage] = useState("");
 
   const handleSendOTP = async () => {
     if (!phoneNumber || phoneNumber.length !== 10) {
@@ -34,50 +40,110 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setStep("otp");
-      toast({
-        title: "OTP Sent!",
-        description: `Verification code sent to +91 ${phoneNumber}`,
+    try {
+      setLoading(true);
+      const res = await fetch(SEND_OTP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: phoneNumber }),
       });
-    }, 2000);
+
+      const data = await res.json();
+
+      if (res.ok && (data?.statusHandler?.statusCode === "200" || res.status === 200)) {
+        setCustInfo(data);
+        if (data?.otp) setOtpLength(data.otp.length);
+        setStep("otp");
+
+        toast({
+          title: "OTP Sent!",
+          description: `Verification code sent to +91 ${phoneNumber}`,
+        });
+      } else {
+        toast({
+          title: "Failed to send OTP",
+          description: data?.statusHandler?.message || data?.message || "Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (e) {
+      toast({
+        title: "Network Error",
+        description: "Unable to send OTP. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleVerifyOTP = async () => {
-  if (!otp || otp.length !== 6) {
-    toast({
-      title: "Invalid OTP",
-      description: "Please enter a valid 6-digit OTP",
-      variant: "destructive",
-    });
-    return;
-  }
+    if (!otp || otp.length !== otpLength) {
+      toast({
+        title: "Invalid OTP",
+        description: `Please enter a valid ${otpLength}-digit OTP`,
+        variant: "destructive",
+      });
+      return;
+    }
 
-  setLoading(true);
-  setTimeout(() => {
-    setLoading(false);
+    try {
+      setLoading(true);
 
-    // Save to localStorage ✅
-    localStorage.setItem("mobileNumber", phoneNumber);
+      const response = await fetch(VERIFY_OTP_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mobile: phoneNumber,
+          otp: otp,
+        }),
+      });
 
-    toast({
-      title: "Login Successful!",
-      description: "Welcome to Shiftyng",
-    });
+      const data = await response.json();
 
-    onLoginSuccess(phoneNumber);
-    onClose();
-    resetForm();
-  }, 2000);
-};
+      if (response.ok && data?.otpVerified === true) {
+        localStorage.setItem("authToken", data.token || "");
+        localStorage.setItem("custId", String(data.custId));
+        localStorage.setItem("custName", data.cust_name || "");
+        localStorage.setItem("mobileNumber", phoneNumber);
+
+        toast({
+          title: "Login Successful",
+          description: `Welcome ${data.cust_name || "User"}!`,
+        });
+
+        onLoginSuccess(phoneNumber);
+        onClose();
+        resetForm();
+      } else {
+        toast({
+          title: "OTP Verification Failed",
+          description: data?.statusHandler?.message || data?.message || "Incorrect OTP. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("OTP Verify error:", error);
+      toast({
+        title: "Network Error",
+        description: "Unable to verify OTP. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const resetForm = () => {
     setStep("phone");
     setPhoneNumber("");
     setOtp("");
+    setCustInfo(null);
+    setOtpLength(4);
+    setMessage("");
   };
 
   return (
@@ -142,7 +208,7 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
                       <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-[#BA1C1C]" />
                     </div>
                     <p className="text-gray-600 text-sm sm:text-base">
-                      Enter the 6-digit code sent to
+                      Enter the {otpLength}-digit code sent to
                     </p>
                     <p className="font-semibold text-gray-800 text-sm sm:text-base">
                       +91 {phoneNumber}
@@ -157,20 +223,20 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
                       <Input
                         id="otp"
                         type="text"
-                        placeholder="Enter 6-digit OTP"
+                        placeholder={`Enter ${otpLength}-digit OTP`}
                         value={otp}
                         onChange={(e) =>
-                          setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                          setOtp(e.target.value.replace(/\D/g, "").slice(0, otpLength))
                         }
                         className="text-center text-xl sm:text-2xl tracking-widest"
-                        maxLength={6}
+                        maxLength={otpLength}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Button
                         onClick={handleVerifyOTP}
-                        disabled={loading || otp.length !== 6}
+                        disabled={loading || otp.length !== otpLength}
                         className="w-full bg-[#BA1C1C] hover:bg-red-700 text-sm sm:text-base"
                       >
                         {loading ? "Verifying..." : "Verify & Login"}

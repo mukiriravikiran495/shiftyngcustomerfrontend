@@ -37,7 +37,7 @@ const ChatWidget = () => {
     // Auto-close chat after 10 seconds
     const closeTimer = setTimeout(() => {
       setIsOpen(false);
-    }, 11000); // 1s delay + 10s duration
+    }, 3000); // 1s delay + 10s duration
 
     return () => {
       clearTimeout(openTimer);

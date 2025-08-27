@@ -11,10 +11,12 @@ import NotFound from "./pages/NotFound";
 import BookingDetails from "./pages/BookingDetails";
 import BookingSuccess from "./pages/BookingSuccess";
 import ProfilePage from "./pages/Profile";
-import BookingsPage from "./pages/myBookings";
+import BookingsPage from "./pages/mybookings";
 import TransactionsPage from "./pages/Transactions";
-
-
+import BookingForm from "./pages/bookingform";
+import SelectTruck from "./pages/selecttruck"
+import TruckBooking from "./pages/truckbooking"
+import TruckBookingForm from "./pages/truckbookingform";
 
 const queryClient = new QueryClient();
 
@@ -34,7 +36,11 @@ const App = () => (
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/mybookings" element={<BookingsPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
-          
+          <Route path="/bookingform" element={<BookingForm />} />
+          <Route path="/selecttruck" element={<SelectTruck />} />
+          <Route path="/truckbooking" element={<TruckBooking />} />
+          <Route path="/truckbookingform" element={<TruckBookingForm />} />
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
